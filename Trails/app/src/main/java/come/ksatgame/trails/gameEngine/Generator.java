@@ -16,7 +16,6 @@ public class Generator {
         if (instance == null)
             instance = new Generator();
         return instance;
-
     }
 
 
@@ -39,11 +38,11 @@ public class Generator {
             int j=0;
             int start=track;
             boolean b=true;
-            while(b && start>=0)
+            while(start>=0)
             {
                 b=matrix[i][start]==0;
                 if(!b)
-                    start++;
+                    break;
                 start--;
             }
             start++;
