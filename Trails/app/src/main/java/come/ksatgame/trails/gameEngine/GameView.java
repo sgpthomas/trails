@@ -122,7 +122,7 @@ public class GameView extends SurfaceView implements Runnable {
             matrixPosition += speedPerSecond / fps;
         }
 
-        if (matrixPosition > screenHeight + (blockSize * 7)) {
+        if (matrixPosition > screenHeight+blockSize) {
             matrix = Generator.getInstance().genMatrix(7, 7, 2);
             matrixPosition = 0;
         }
@@ -155,7 +155,6 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
             }
-
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
