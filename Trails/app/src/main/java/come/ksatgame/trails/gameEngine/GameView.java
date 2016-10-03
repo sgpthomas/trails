@@ -1,17 +1,14 @@
 package come.ksatgame.trails.gameEngine;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import com.ksatgames.trails.R;
 
 /**
  * Created by samthomas on 10/2/16.
@@ -42,16 +39,16 @@ public class GameView extends SurfaceView implements Runnable {
     private long timeThisFrame;
 
     // Declare an object of type Bitmap
-    Bitmap bitmapBob;
+//    Bitmap bitmapBob;
 
     // Bob starts off not moving
     boolean isMoving = false;
 
     // He can walk at 150 pixels per second
-    float walkSpeedPerSecond = 150;
+    float speedPerSecond = 150;
 
-    // He starts 10 pixels from the left
-    float bobXPosition = 10;
+    // Progress of matrix
+    int matrixPosition = 0;
 
     // When the we initialize (call new()) on gameView
     // This special constructor method runs
@@ -66,7 +63,7 @@ public class GameView extends SurfaceView implements Runnable {
         paint = new Paint();
 
         // Load Bob from his .png file
-        bitmapBob = BitmapFactory.decodeResource(this.getResources(), R.drawable.bob);
+//        bitmapBob = BitmapFactory.decodeResource(this.getResources(), R.drawable.bob);
 
         // Set our boolean to true - game on!
         playing = true;
@@ -105,8 +102,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         // If bob is moving (the player is touching the screen)
         // then move him to the right based on his target speed and the current fps.
-        if(isMoving){
-            bobXPosition = bobXPosition + (walkSpeedPerSecond / fps);
+        if (isMoving) {
+            matrixPosition += speedPerSecond / fps;
         }
 
     }
@@ -123,18 +120,23 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawColor(Color.argb(255,  255, 255, 255)); // white
 
             // Draw bob at bobXPosition, 200 pixels
-            canvas.drawBitmap(bitmapBob, bobXPosition, 200, paint);
+//            canvas.drawBitmap(bitmapBob, bobXPosition, 200, paint);
 
             paint.setColor(Color.BLACK);
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
 
-            canvas.drawRect(0, 0, 200, 400, paint);
+            Rect rect = getRect(100, matrixPosition, 100, 100);
+            canvas.drawRect(rect, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
 
+    }
+
+    private Rect getRect(int x, int y, int width, int height) {
+        return new Rect(x, y, x + width, y + height);
     }
 
     // If SimpleGameEngine Activity is paused/stopped

@@ -5,4 +5,16 @@ package come.ksatgame.trails.gameEngine;
  */
 
 public class Generator {
+
+    private static Generator instance;
+
+    private Generator() {
+
+    }
+
+    public static Generator getInstance() {
+        if (instance == null)
+            instance = new Generator();
+        return instance;
+    }
 }
