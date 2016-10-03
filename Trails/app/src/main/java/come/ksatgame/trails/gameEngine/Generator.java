@@ -21,7 +21,7 @@ public class Generator {
 
     public int[][] genMatrix(int l, int w, int max) //generated original matrix; to be called before start of game
     {
-        int track= (int) (Math.random()*w);	//keeps track of the usable track
+        int track = (int) (Math.random() * w);    //keeps track of the usable track
         int matrix[][] = new int[l][w];
         for (int i = 0; i < l; i++) {
             int[] a = new int[max];
