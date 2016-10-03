@@ -20,7 +20,7 @@ public class Generator {
     }
 
     //max is maximum number of obstacles per line. assumption: less then half of width
-    private int[][] genMatrix(int l, int w, int max) //generated original matrix; to be called before start of game
+    public int[][] genMatrix(int l, int w, int max) //generated original matrix; to be called before start of game
     {
         int matrix[][] = new int[l][w];
         for (int i = 0; i < l; i++) {

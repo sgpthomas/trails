@@ -51,8 +51,13 @@ public class GameView extends SurfaceView implements Runnable {
     // Progress of matrix
     int matrixPosition = 0;
 
-    int windowWidth;
-    int windowHeight;
+    // window dimensions
+    int screenWidth;
+    int screenHeight;
+
+    // matrix
+    int[][] matrix;
+    int blockSize;
 
     // When the we initialize (call new()) on gameView
     // This special constructor method runs
@@ -63,8 +68,8 @@ public class GameView extends SurfaceView implements Runnable {
         super(context);
 
         // initialize window dimensions
-        windowHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-        windowWidth = Resources.getSystem().getDisplayMetrics().heightPixels;
+        screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        screenWidth = Resources.getSystem().getDisplayMetrics().heightPixels;
 
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
@@ -72,6 +77,11 @@ public class GameView extends SurfaceView implements Runnable {
 
         // Load Bob from his .png file
 //        bitmapBob = BitmapFactory.decodeResource(this.getResources(), R.drawable.bob);
+
+        // get matrix
+        int cols = 7;
+        matrix = Generator.getInstance().genMatrix(100, cols, 2);
+        blockSize = screenWidth / cols;
 
         // Set our boolean to true - game on!
         playing = true;
@@ -111,10 +121,6 @@ public class GameView extends SurfaceView implements Runnable {
         if (fps != 0) {
             matrixPosition += speedPerSecond / fps;
         }
-
-        if (matrixPosition > windowHeight) {
-            matrixPosition = 0;
-        }
     }
 
     // Draw the newly updated scene
@@ -136,10 +142,14 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
 
-            Rect rect = getRect(100, matrixPosition, 100, 100);
-            canvas.drawRect(rect, paint);
-
-            canvas.drawRect(getRect(200, matrixPosition + 100, 100, 100), paint);
+            // matrix logic
+            for (int y = 0; y < matrix.length; y++) {
+                for (int x = 0; x < matrix[y].length; y++) {
+                    if (matrix[x][y] == 1) {
+                        canvas.drawRect(getRect(x*blockSize, y*blockSize+matrixPosition , blockSize, blockSize), paint);
+                    }
+                }
+            }
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
