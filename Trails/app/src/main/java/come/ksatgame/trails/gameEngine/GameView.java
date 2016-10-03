@@ -46,7 +46,7 @@ public class GameView extends SurfaceView implements Runnable {
     boolean isMoving = false;
 
     // He can walk at 150 pixels per second
-    float speedPerSecond = 150;
+    float speedPerSecond = 300;
 
     // Progress of matrix
     int matrixPosition = 0;
@@ -69,7 +69,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         // initialize window dimensions
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-        screenWidth = Resources.getSystem().getDisplayMetrics().heightPixels;
+        screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
@@ -80,7 +80,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         // get matrix
         int cols = 7;
-        matrix = Generator.getInstance().genMatrix(100, cols, 2);
+        matrix = Generator.getInstance().genMatrix(7, cols, 2);
         blockSize = screenWidth / cols;
 
         // Set our boolean to true - game on!
@@ -121,6 +121,11 @@ public class GameView extends SurfaceView implements Runnable {
         if (fps != 0) {
             matrixPosition += speedPerSecond / fps;
         }
+
+        if (matrixPosition > screenHeight + (blockSize * 7)) {
+            matrix = Generator.getInstance().genMatrix(7, 7, 2);
+            matrixPosition = 0;
+        }
     }
 
     // Draw the newly updated scene
@@ -143,9 +148,9 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
 
             // matrix logic
-            for (int y = 0; y < matrix.length; y++) {
-                for (int x = 0; x < matrix[y].length; y++) {
-                    if (matrix[x][y] == 1) {
+            for (int y = 0; y < matrix.length-1; y++) {
+                for (int x = 0; x < matrix[y].length-1; x++) {
+                    if (matrix[y][x] == 1) {
                         canvas.drawRect(getRect(x*blockSize, y*blockSize+matrixPosition , blockSize, blockSize), paint);
                     }
                 }
