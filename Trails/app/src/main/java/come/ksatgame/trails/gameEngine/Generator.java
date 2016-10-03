@@ -19,24 +19,21 @@ public class Generator {
 
     }
 
+
     public int[][] genMatrix(int l, int w, int max) //generated original matrix; to be called before start of game
     {
-        int track = (int) (Math.random() * w);    //keeps track of the usable track
+        int track= (int) (Math.random()*w);	//keeps track of the usable track
         int matrix[][] = new int[l][w];
         for (int i = 0; i < l; i++) {
-            int[] a = new int[max];
-            for (int j = 0; j < max;) {
-                int x = (int) (Math.random()*l);
-                if(x!=track)
-                    a[j++]=x;
-            }
 
             for (int j = 0; j < w; j++) {
                 matrix[i][j]=0;
-                for(int k=0; k<max; k++)
-                {
-                    if (j == a[k])
-                        matrix[i][j] = 1;
+            }
+            for (int j = 0; j < max;) {
+                int x = (int) (Math.random()*l);
+                if(x!=track)	{
+                    matrix[i][x]=1;
+                    j++;
                 }
             }
             int j=0;
@@ -54,7 +51,6 @@ public class Generator {
             b=true;
             while(b && start+j<matrix[i].length)
             {
-                System.out.println(i+" : "+j+" : "+(start+j)+ " : " + track);
                 b=matrix[i][start+j]==0;
                 if(!b)
                     j--;
