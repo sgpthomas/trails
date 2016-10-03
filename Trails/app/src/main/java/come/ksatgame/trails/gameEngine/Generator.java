@@ -9,7 +9,7 @@ public class Generator {
     private static Generator instance;
 
     private Generator() {
-
+        
     }
 
     public static Generator getInstance() {

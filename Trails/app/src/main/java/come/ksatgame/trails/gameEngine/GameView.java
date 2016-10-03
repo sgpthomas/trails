@@ -1,6 +1,7 @@
 package come.ksatgame.trails.gameEngine;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -50,6 +51,9 @@ public class GameView extends SurfaceView implements Runnable {
     // Progress of matrix
     int matrixPosition = 0;
 
+    int windowWidth;
+    int windowHeight;
+
     // When the we initialize (call new()) on gameView
     // This special constructor method runs
     public GameView(Context context) {
@@ -57,6 +61,10 @@ public class GameView extends SurfaceView implements Runnable {
         // SurfaceView class to set up our object.
         // How kind.
         super(context);
+
+        // initialize window dimensions
+        windowHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        windowWidth = Resources.getSystem().getDisplayMetrics().heightPixels;
 
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
@@ -100,12 +108,13 @@ public class GameView extends SurfaceView implements Runnable {
     // We will also do other things like collision detection.
     public void update() {
 
-        // If bob is moving (the player is touching the screen)
-        // then move him to the right based on his target speed and the current fps.
-        if (isMoving) {
+        if (fps != 0) {
             matrixPosition += speedPerSecond / fps;
         }
 
+        if (matrixPosition > windowHeight) {
+            matrixPosition = 0;
+        }
     }
 
     // Draw the newly updated scene
@@ -122,12 +131,15 @@ public class GameView extends SurfaceView implements Runnable {
             // Draw bob at bobXPosition, 200 pixels
 //            canvas.drawBitmap(bitmapBob, bobXPosition, 200, paint);
 
+            // set color of rectangles
             paint.setColor(Color.BLACK);
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
 
             Rect rect = getRect(100, matrixPosition, 100, 100);
             canvas.drawRect(rect, paint);
+
+            canvas.drawRect(getRect(200, matrixPosition + 100, 100, 100), paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
