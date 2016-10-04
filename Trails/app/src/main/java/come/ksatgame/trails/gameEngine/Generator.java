@@ -19,43 +19,49 @@ public class Generator {
     }
 
 
-    public int[][] genMatrix(int l, int w, int max) //generated original matrix; to be called before start of game
+    public int[][] genMatrix(int l, int w, int max) // generated original matrix; to be called before start of game
     {
-        int track= (int) (Math.random()*w);	//keeps track of the usable track
-        int matrix[][] = new int[l][w];
+        int track = (int) (Math.random()*w); // keeps track of the usable track
+        int matrix[][] = new int[l][w]; // this is what we are generating
+
+        // loop through the rows
         for (int i = 0; i < l; i++) {
 
+            // loop through the cols and set everything to 0
             for (int j = 0; j < w; j++) {
-                matrix[i][j]=0;
+                matrix[i][j] = 0;
             }
+
+            // loop through the cols and choose max 1s
             for (int j = 0; j < max;) {
-                int x = (int) (Math.random()*l);
-                if(x!=track)	{
-                    matrix[i][x]=1;
+                int x = (int) (Math.random()*w);
+
+                // make sure we keep an open track
+                if (x != track) {
+                    matrix[i][x] = 1;
                     j++;
                 }
             }
-            int j=0;
-            int start=track;
-            boolean b=true;
-            while(start>=0)
+
+            int j;
+            int start = track;
+            while (start >= 0)
             {
-                b=matrix[i][start]==0;
-                if(!b)
+                if (matrix[i][start] != 0)
                     break;
                 start--;
             }
             start++;
-            j=track-start;
-            b=true;
-            while(b && start+j<matrix[i].length)
+            j = track-start;
+            boolean b = true;
+            while (b && start+j<matrix[i].length)
             {
                 b=matrix[i][start+j]==0;
-                if(!b)
-                    j--;
+                if (!b)
+                    break;
                 j++;
             }
-            track=start+(int)(Math.random()*j);
+            track = start+(int)(Math.random()*j);
         }
         return matrix;
     }
