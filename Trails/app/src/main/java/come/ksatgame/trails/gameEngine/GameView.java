@@ -148,8 +148,8 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
 
             // matrix logic
-            for (int y = 0; y < matrix.length-1; y++) {
-                for (int x = 0; x < matrix[y].length-1; x++) {
+            for (int y = 0; y < matrix.length; y++) {
+                for (int x = 0; x < matrix[y].length; x++) {
                     if (matrix[y][x] == 1) {
                         canvas.drawRect(getRect(x*blockSize, y*blockSize+matrixPosition , blockSize, blockSize), paint);
                     }
