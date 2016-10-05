@@ -50,6 +50,7 @@ public class GameView extends SurfaceView implements Runnable {
 
     // Progress of matrix
     int matrixPosition = 0;
+    int matrixCounter=0;    //how many blocks have already passed throught he screen?
 
     // window dimensions
     int screenWidth;
@@ -80,9 +81,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         // get matrix
         int cols = 7;
-        matrix = Generator.getInstance().genMatrix(7, cols, 2);
         blockSize = screenWidth / cols;
-
+        //ten screen's worth falling blocks
+        matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*10, cols, 2);
         // Set our boolean to true - game on!
         playing = true;
 
@@ -148,13 +149,24 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
 
             // matrix logic
-            for (int y = 0; y < matrix.length-1; y++) {
-                for (int x = 0; x < matrix[y].length-1; x++) {
+
+           for (int y = matrix.length-(screenHeight%blockSize)-matrixCounter; y < matrix.length-matrixCounter && y>0; y++) {
+                for (int x = 0; x < matrix[y].length; x++) {
+                    if (matrix[y][x] == 1) {
+                        canvas.drawRect(getRect(x*blockSize, (y%(screenHeight%blockSize)+matrixCounter)*blockSize+matrixPosition, blockSize, blockSize), paint);
+                    }
+                }
+            }
+            if((matrix.length-(screenHeight%blockSize)-matrixCounter)*blockSize > screenHeight)
+                matrixCounter++;
+                  /*  for (int y = matrix.length-; y < matrix.length; y++) {
+                for (int x = 0; x < matrix[y].length; x++) {
                     if (matrix[y][x] == 1) {
                         canvas.drawRect(getRect(x*blockSize, y*blockSize+matrixPosition , blockSize, blockSize), paint);
                     }
                 }
             }
+*/
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
