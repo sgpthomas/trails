@@ -53,10 +53,9 @@ public class Generator {
             start++;
             int j = track-start;
             boolean b = true;
-            while (b && start+j<matrix[i].length)
+            while (start+j<matrix[i].length)
             {
-                b = matrix[i][start+j]==0;
-                if (!b)
+                if (matrix[i][start+j]!=0)
                     break;
                 j++;
             }

@@ -61,6 +61,8 @@ public class GameView extends SurfaceView implements Runnable {
 
     // matrix
     int[][] matrix;
+    int[][] submatrix;
+    int passed=0; //counts number of blocks that have already fallen through
     int blockSize;
 
     public GameView(Context context) {
@@ -79,9 +81,17 @@ public class GameView extends SurfaceView implements Runnable {
 
         // get matrix
         int cols = 7;
-        matrix = Generator.getInstance().genMatrix(7, cols, 2);
         blockSize = screenWidth / cols;
-
+        //ten screen's worth falling blocks
+        matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*10, cols, 2);
+        submatrix=new int[screenHeight/blockSize+3][cols];
+        for(int i=0; i<submatrix.length; i++)
+        {
+            for(int j=0; j<cols; j++)
+            {
+                submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-4+i][j];
+            }
+        }
         // Set our boolean to true - game on!
         playing = true;
 
@@ -98,7 +108,7 @@ public class GameView extends SurfaceView implements Runnable {
             update();
 
             // Draw the frame
-            draw();
+            draw(submatrix);
 
             // Calculate the fps this frame
             // We can then use the result to
@@ -107,9 +117,7 @@ public class GameView extends SurfaceView implements Runnable {
             if (timeThisFrame > 0) {
                 fps = 1000 / timeThisFrame;
             }
-
         }
-
     }
 
     // Everything that needs to be updated goes in here
@@ -126,14 +134,23 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
-        if (matrixPosition > screenHeight+blockSize) {
-            matrix = Generator.getInstance().genMatrix(7, 7, 2);
-            matrixPosition = -1 * blockSize * 7;
+        if (matrixPosition>blockSize)
+        {
+            matrixPosition=0;
+            passed++;
+            for(int i=0; i<submatrix.length; i++)
+            {
+                for(int j=0; j<submatrix[i].length; j++)
+                {
+                    //there's a two row padding for smooth transtions
+                    submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-4-passed+i][j];
+                }
+            }
         }
     }
 
     // Draw the newly updated scene
-    public void draw() {
+    public void draw(int[][] matrix) {
 
         // Make sure our drawing surface is valid or we crash
         if (ourHolder.getSurface().isValid()) {
@@ -148,15 +165,14 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
 
-            // matrix draw logic
+            // matrix logic
             for (int y = 0; y < matrix.length; y++) {
                 for (int x = 0; x < matrix[y].length; x++) {
                     if (matrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x*blockSize, y*blockSize+matrixPosition , blockSize, blockSize), paint);
+                        canvas.drawRect(getRect(x*blockSize, (y-1)*blockSize+matrixPosition , blockSize, blockSize), paint);
                     }
                 }
             }
-
             // player draw logic
             paint.setColor(Color.BLUE);
 
