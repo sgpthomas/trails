@@ -43,7 +43,9 @@ public class GameView extends SurfaceView implements Runnable {
 //    Bitmap bitmapBob;
 
     // Bob starts off not moving
-    boolean isMoving = false;
+    float playerX;
+    final int playerRadius = 25;
+    final int playerHeight = 150;
 
     // He can walk at 150 pixels per second
     float speedPerSecond = 300;
@@ -70,6 +72,8 @@ public class GameView extends SurfaceView implements Runnable {
         // initialize window dimensions
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+
+        playerX = (screenWidth / 2);
 
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
@@ -147,7 +151,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
 
-            // matrix logic
+            // matrix draw logic
             for (int y = 0; y < matrix.length; y++) {
                 for (int x = 0; x < matrix[y].length; x++) {
                     if (matrix[y][x] == 1) {
@@ -155,6 +159,12 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
             }
+
+            // player draw logic
+            paint.setColor(Color.BLUE);
+
+            canvas.drawCircle(playerX, screenHeight - playerHeight, playerRadius, paint);
+
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -195,16 +205,16 @@ public class GameView extends SurfaceView implements Runnable {
             // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
 
-                // Set isMoving so Bob is moved in the update method
-                isMoving = true;
+//                playerX = motionEvent.getX();
 
                 break;
 
+            case MotionEvent.ACTION_MOVE:
+
+                playerX = motionEvent.getX();
+
             // Player has removed finger from screen
             case MotionEvent.ACTION_UP:
-
-                // Set isMoving so Bob does not move
-                isMoving = false;
 
                 break;
         }
