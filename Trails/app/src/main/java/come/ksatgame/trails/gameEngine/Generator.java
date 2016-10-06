@@ -43,7 +43,6 @@ public class Generator {
                 }
             }
 
-            int j;
             int start = track;
             while (start >= 0)
             {
@@ -52,7 +51,7 @@ public class Generator {
                 start--;
             }
             start++;
-            j = track-start;
+            int j = track-start;
             boolean b = true;
             while (start+j<matrix[i].length)
             {
