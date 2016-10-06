@@ -43,14 +43,15 @@ public class GameView extends SurfaceView implements Runnable {
 //    Bitmap bitmapBob;
 
     // Bob starts off not moving
-    boolean isMoving = false;
+    float playerX;
+    final int playerRadius = 25;
+    final int playerHeight = 150;
 
     // He can walk at 150 pixels per second
     float speedPerSecond = 300;
 
     // Progress of matrix
     int matrixPosition = 0;
-    int matrixCounter=0;    //how many blocks have already passed throught he screen?
 
     // window dimensions
     int screenWidth;
@@ -58,7 +59,10 @@ public class GameView extends SurfaceView implements Runnable {
 
     // matrix
     int[][] matrix;
+    int[][] submatrix;
+    int passed=0; //counts number of blocks that have already fallen through
     int blockSize;
+
 
     // When the we initialize (call new()) on gameView
     // This special constructor method runs
@@ -72,6 +76,8 @@ public class GameView extends SurfaceView implements Runnable {
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
+        playerX = (screenWidth / 2);
+
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
         paint = new Paint();
@@ -84,6 +90,14 @@ public class GameView extends SurfaceView implements Runnable {
         blockSize = screenWidth / cols;
         //ten screen's worth falling blocks
         matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*10, cols, 2);
+        submatrix=new int[screenHeight/blockSize+2][cols];
+        for(int i=0; i<submatrix.length; i++)
+        {
+            for(int j=0; j<cols; j++)
+            {
+                submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-3+i][j];
+            }
+        }
         // Set our boolean to true - game on!
         playing = true;
 
@@ -100,7 +114,7 @@ public class GameView extends SurfaceView implements Runnable {
             update();
 
             // Draw the frame
-            draw();
+            draw(submatrix);
 
             // Calculate the fps this frame
             // We can then use the result to
@@ -109,9 +123,7 @@ public class GameView extends SurfaceView implements Runnable {
             if (timeThisFrame > 0) {
                 fps = 1000 / timeThisFrame;
             }
-
         }
-
     }
 
     // Everything that needs to be updated goes in here
@@ -123,14 +135,22 @@ public class GameView extends SurfaceView implements Runnable {
             matrixPosition += speedPerSecond / fps;
         }
 
-        if (matrixPosition > screenHeight+blockSize) {
-            matrix = Generator.getInstance().genMatrix(7, 7, 2);
-            matrixPosition = 0;
+        if (matrixPosition>blockSize)
+        {
+            matrixPosition=0;
+            passed++;
+            for(int i=0; i<submatrix.length; i++)
+            {
+                for(int j=0; j<submatrix[i].length; j++)
+                {
+                    submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-3-passed+i][j];
+                }
+            }
         }
     }
 
     // Draw the newly updated scene
-    public void draw() {
+    public void draw(int[][] matrix) {
 
         // Make sure our drawing surface is valid or we crash
         if (ourHolder.getSurface().isValid()) {
@@ -149,24 +169,17 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
 
             // matrix logic
-           for (int y = matrix.length-(screenHeight%blockSize)-matrixCounter; y < matrix.length-matrixCounter && y>0; y++) {
-                for (int x = 0; x < matrix[y].length; x++) {
-                    if (matrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x*blockSize, (y%(screenHeight%blockSize)+matrixCounter)*blockSize+matrixPosition, blockSize, blockSize), paint);
-                    }
-                }
-            }
-            if((matrix.length-(screenHeight%blockSize)-matrixCounter)*blockSize > screenHeight)
-                matrixCounter++;
-                  /*  for (int y = matrix.length-; y < matrix.length; y++) {
             for (int y = 0; y < matrix.length; y++) {
                 for (int x = 0; x < matrix[y].length; x++) {
                     if (matrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x*blockSize, y*blockSize+matrixPosition , blockSize, blockSize), paint);
+                        canvas.drawRect(getRect(x*blockSize, (y-1)*blockSize+matrixPosition , blockSize, blockSize), paint);
                     }
                 }
             }
-*/
+            // player draw logic
+            paint.setColor(Color.BLUE);
+
+            canvas.drawCircle(playerX, screenHeight - playerHeight, playerRadius, paint);
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -207,16 +220,16 @@ public class GameView extends SurfaceView implements Runnable {
             // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
 
-                // Set isMoving so Bob is moved in the update method
-                isMoving = true;
+//                playerX = motionEvent.getX();
 
                 break;
 
+            case MotionEvent.ACTION_MOVE:
+
+                playerX = motionEvent.getX();
+
             // Player has removed finger from screen
             case MotionEvent.ACTION_UP:
-
-                // Set isMoving so Bob does not move
-                isMoving = false;
 
                 break;
         }
