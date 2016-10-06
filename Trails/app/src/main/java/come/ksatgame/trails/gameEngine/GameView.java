@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -44,8 +45,9 @@ public class GameView extends SurfaceView implements Runnable {
 
     // Bob starts off not moving
     float playerX;
+    float playerDeltaX;
     final int playerRadius = 25;
-    final int playerHeight = 150;
+    final int playerHeight = 250;
 
     // He can walk at 150 pixels per second
     float speedPerSecond = 300;
@@ -61,12 +63,8 @@ public class GameView extends SurfaceView implements Runnable {
     int[][] matrix;
     int blockSize;
 
-    // When the we initialize (call new()) on gameView
-    // This special constructor method runs
     public GameView(Context context) {
-        // The next line of code asks the
-        // SurfaceView class to set up our object.
-        // How kind.
+        // initialize our object
         super(context);
 
         // initialize window dimensions
@@ -78,9 +76,6 @@ public class GameView extends SurfaceView implements Runnable {
         // Initialize ourHolder and paint objects
         ourHolder = getHolder();
         paint = new Paint();
-
-        // Load Bob from his .png file
-//        bitmapBob = BitmapFactory.decodeResource(this.getResources(), R.drawable.bob);
 
         // get matrix
         int cols = 7;
@@ -122,13 +117,18 @@ public class GameView extends SurfaceView implements Runnable {
     // We will also do other things like collision detection.
     public void update() {
 
+        // update matrix position
         if (fps != 0) {
             matrixPosition += speedPerSecond / fps;
+
+            if (playerDeltaX > 0) {
+//                playerDeltaX +=
+            }
         }
 
         if (matrixPosition > screenHeight+blockSize) {
             matrix = Generator.getInstance().genMatrix(7, 7, 2);
-            matrixPosition = 0;
+            matrixPosition = -1 * blockSize * 7;
         }
     }
 
@@ -142,9 +142,6 @@ public class GameView extends SurfaceView implements Runnable {
 
             // Draw the background color
             canvas.drawColor(Color.argb(255,  255, 255, 255)); // white
-
-            // Draw bob at bobXPosition, 200 pixels
-//            canvas.drawBitmap(bitmapBob, bobXPosition, 200, paint);
 
             // set color of rectangles
             paint.setColor(Color.BLACK);
@@ -163,12 +160,15 @@ public class GameView extends SurfaceView implements Runnable {
             // player draw logic
             paint.setColor(Color.BLUE);
 
-            canvas.drawCircle(playerX, screenHeight - playerHeight, playerRadius, paint);
+            canvas.drawRoundRect(new RectF(getRect((int)playerX+playerRadius, screenHeight-playerHeight-playerRadius,
+                    2*playerRadius, 2*playerRadius)), playerRadius/2, playerRadius/2, paint);
+
+            paint.setColor(Color.RED);
+            canvas.drawLine(0, matrixPosition, screenWidth, matrixPosition, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
-
     }
 
     private Rect getRect(int x, int y, int width, int height) {
@@ -205,7 +205,8 @@ public class GameView extends SurfaceView implements Runnable {
             // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
 
-//                playerX = motionEvent.getX();
+                playerDeltaX = motionEvent.getX() - playerX;
+                Log.d("asdf", Float.toString(playerDeltaX));
 
                 break;
 
