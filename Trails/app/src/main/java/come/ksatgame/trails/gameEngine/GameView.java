@@ -64,7 +64,8 @@ public class GameView extends SurfaceView implements Runnable {
     int[][] submatrix;
     int passed=0; //counts number of blocks that have already fallen through
     int blockSize;
-
+    int dir=1;   //1 is upwards, 2 is down,
+    // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
     public GameView(Context context) {
         // initialize our object
         super(context);
@@ -124,17 +125,13 @@ public class GameView extends SurfaceView implements Runnable {
     // In later projects we will have dozens (arrays) of objects.
     // We will also do other things like collision detection.
     public void update() {
-
         // update matrix position
-        if (fps != 0) {
-            matrixPosition += speedPerSecond / fps;
-
-            if (playerDeltaX > 0) {
-//                playerDeltaX +=
-            }
+        if(passed==matrix.length-screenHeight/blockSize-5)
+        {
+            dir=3;
+            passed=0;
         }
-
-        if (matrixPosition>blockSize)
+        if (matrixPosition>blockSize && dir==1)
         {
             matrixPosition=0;
             passed++;
@@ -147,6 +144,34 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+        if (matrixPosition<(-blockSize) && dir==2)
+        {
+            matrixPosition=0;
+            passed++;
+            for(int i=0; i<submatrix.length; i++)
+            {
+                for(int j=0; j<submatrix[i].length; j++)
+                {
+                    //there's a three row padding for smooth transtions
+                    submatrix[i][j]=matrix[passed+i+1][j];
+                }
+            }
+        }
+        if (fps != 0) {
+            if (dir==4 || dir==2)
+                matrixPosition -= speedPerSecond / fps;
+            else
+                matrixPosition += speedPerSecond / fps;
+            if (playerDeltaX > 0) {
+//                playerDeltaX +=
+            }
+        }
+        if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir==3)
+        {
+            dir=4;
+        }
+        if(matrixPosition<=1 && dir==4)
+            dir=2;
     }
 
     // Draw the newly updated scene
@@ -165,18 +190,18 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
 
-            // matrix logic
-            for (int y = 0; y < matrix.length; y++) {
-                for (int x = 0; x < matrix[y].length; x++) {
-                    if (matrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x*blockSize, (y-1)*blockSize+matrixPosition , blockSize, blockSize), paint);
+                // matrix logic
+                for (int y = 0; y < matrix.length; y++) {
+                    for (int x = 0; x < matrix[y].length; x++) {
+                        if (matrix[y][x] == 1) {
+                            canvas.drawRect(getRect(x * blockSize, (y - 1) * blockSize + ((dir == 1 || dir==2)? matrixPosition : 0), blockSize, blockSize), paint);
+                        }
                     }
                 }
-            }
             // player draw logic
             paint.setColor(Color.BLUE);
 
-            canvas.drawRoundRect(new RectF(getRect((int)playerX+playerRadius, screenHeight-playerHeight-playerRadius,
+            canvas.drawRoundRect(new RectF(getRect((int)playerX+playerRadius, screenHeight-playerHeight-playerRadius-((dir==3 || dir==4)?matrixPosition:0),
                     2*playerRadius, 2*playerRadius)), playerRadius/2, playerRadius/2, paint);
 
             paint.setColor(Color.RED);
