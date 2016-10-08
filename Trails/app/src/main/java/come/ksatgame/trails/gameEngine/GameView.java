@@ -37,15 +37,13 @@ public class GameView extends SurfaceView implements Runnable {
     // This variable tracks the game frame rate
     long fps;
 
-    // This is used to help calculate the fps
-    private long timeThisFrame;
-
     // Declare an object of type Bitmap
 //    Bitmap bitmapBob;
 
     // Bob starts off not moving
     float playerX;
-    float playerDeltaX;
+    float playerNewX;
+    float playerDeltaX = 0;
     final int playerRadius = 25;
     final int playerHeight = 250;
 
@@ -114,7 +112,7 @@ public class GameView extends SurfaceView implements Runnable {
             // Calculate the fps this frame
             // We can then use the result to
             // time animations and more.
-            timeThisFrame = System.currentTimeMillis() - startFrameTime;
+            long timeThisFrame = System.currentTimeMillis() - startFrameTime;
             if (timeThisFrame > 0) {
                 fps = 1000 / timeThisFrame;
             }
@@ -126,11 +124,11 @@ public class GameView extends SurfaceView implements Runnable {
     // We will also do other things like collision detection.
     public void update() {
         // update matrix position
-        if(passed==matrix.length-screenHeight/blockSize-5)
-        {
-            dir=3;
-            passed=0;
+        if(passed==matrix.length-screenHeight/blockSize-5) {
+            dir = 3;
+            passed = 0;
         }
+
         if (matrixPosition>blockSize && dir==1)
         {
             matrixPosition=0;
@@ -162,8 +160,14 @@ public class GameView extends SurfaceView implements Runnable {
                 matrixPosition -= speedPerSecond / fps;
             else
                 matrixPosition += speedPerSecond / fps;
-            if (playerDeltaX > 0) {
-//                playerDeltaX +=
+            if (playerDeltaX != 0) {
+                if (Math.abs(playerX - playerNewX) < 15) {
+//                    playerX = playerNewX;
+                    playerDeltaX = 0;
+                    playerNewX = 0;
+                } else {
+                    playerX += playerDeltaX / (10);
+                }
             }
         }
         if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir==3)
@@ -245,18 +249,10 @@ public class GameView extends SurfaceView implements Runnable {
 
             // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
-
-                playerDeltaX = motionEvent.getX() - playerX;
-                Log.d("asdf", Float.toString(playerDeltaX));
-
-                break;
-
             case MotionEvent.ACTION_MOVE:
 
-                playerX = motionEvent.getX();
-
-            // Player has removed finger from screen
-            case MotionEvent.ACTION_UP:
+                playerNewX = motionEvent.getX();
+                playerDeltaX = playerNewX - playerX;
 
                 break;
         }
