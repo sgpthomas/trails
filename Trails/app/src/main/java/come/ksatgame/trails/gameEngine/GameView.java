@@ -187,7 +187,7 @@ public class GameView extends SurfaceView implements Runnable {
                 if (submatrix[y][x] == 1) {
                     Rect subRect = getRect(x * blockSize, (y - 1) * blockSize + ((dir == 1 || dir == 2) ? matrixPosition : 0), blockSize, blockSize);
                     if (Rect.intersects(playerRect, subRect)) {
-                    throw new RuntimeException("Crash");
+                        throw new RuntimeException("Crash");
                     }
                 }
             }
