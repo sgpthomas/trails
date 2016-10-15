@@ -129,7 +129,6 @@ public class GameView extends SurfaceView implements Runnable {
 
             if (playerDeltaX != 0) {
                 if (Math.abs(playerX - playerNewX) < 15) {
-//                    playerX = playerNewX;
                     playerDeltaX = 0;
                     playerNewX = 0;
                 } else {
