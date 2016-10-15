@@ -31,35 +31,34 @@ public class Generator {
             for (int j = 0; j < w; j++) {
                 matrix[i][j] = 0;
             }
+            if (i < l - 6) {
+                // loop through the cols and choose max 1s
+                for (int j = 0; j < max; ) {
+                    int x = (int) (Math.random() * w);
 
-            // loop through the cols and choose max 1s
-            for (int j = 0; j < max;) {
-                int x = (int) (Math.random()*w);
+                    // make sure we keep an open track
+                    if (x != track) {
+                        matrix[i][x] = 1;
+                        j++;
+                    }
+                }
 
-                // make sure we keep an open track
-                if (x != track) {
-                    matrix[i][x] = 1;
+                int start = track;
+                while (start >= 0) {
+                    if (matrix[i][start] != 0)
+                        break;
+                    start--;
+                }
+                start++;
+                int j = track - start;
+                boolean b = true;
+                while (start + j < matrix[i].length) {
+                    if (matrix[i][start + j] != 0)
+                        break;
                     j++;
                 }
+                track = start + (int) (Math.random() * j);
             }
-
-            int start = track;
-            while (start >= 0)
-            {
-                if (matrix[i][start] != 0)
-                    break;
-                start--;
-            }
-            start++;
-            int j = track-start;
-            boolean b = true;
-            while (start+j<matrix[i].length)
-            {
-                if (matrix[i][start+j]!=0)
-                    break;
-                j++;
-            }
-            track = start+(int)(Math.random()*j);
         }
         return matrix;
     }
