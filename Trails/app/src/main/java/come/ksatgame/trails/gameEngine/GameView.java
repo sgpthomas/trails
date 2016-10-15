@@ -1,6 +1,7 @@
 package come.ksatgame.trails.gameEngine;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,11 +13,16 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.ksatgames.trails.GameOverScreen;
+import com.ksatgames.trails.MainActivity;
+
 /**
  * Created by samthomas on 10/2/16.
  */
 
 public class GameView extends SurfaceView implements Runnable {
+
+    Context context;
 
     // This is our thread
     Thread gameThread = null;
@@ -63,8 +69,10 @@ public class GameView extends SurfaceView implements Runnable {
     int dir=1;   //1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
     public GameView(Context context) {
+
         // initialize our object
         super(context);
+        this.context = context;
 
         // initialize window dimensions
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
@@ -187,7 +195,8 @@ public class GameView extends SurfaceView implements Runnable {
                 if (submatrix[y][x] == 1) {
                     Rect subRect = getRect(x * blockSize, (y - 1) * blockSize + ((dir == 1 || dir == 2) ? matrixPosition : 0), blockSize, blockSize);
                     if (Rect.intersects(playerRect, subRect)) {
-                        throw new RuntimeException("Crash");
+                        Intent intent = new Intent(this.context, GameOverScreen.class);
+                        this.context.startActivity(intent);
                     }
                 }
             }
