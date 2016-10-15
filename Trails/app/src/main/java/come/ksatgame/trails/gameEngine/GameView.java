@@ -48,7 +48,7 @@ public class GameView extends SurfaceView implements Runnable {
     final int playerHeight = 250;
 
     // He can walk at 150 pixels per second
-    float speedPerSecond = 300;
+    float speedPerSecond = 400;
 
     // Progress of matrix
     int matrixPosition = 0;
@@ -62,7 +62,7 @@ public class GameView extends SurfaceView implements Runnable {
     int[][] submatrix;
     int passed=0; //counts number of blocks that have already fallen through
     int blockSize;
-    int dir=1;   //1 is upwards, 2 is down,
+    int dir=1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
     public GameView(Context context) {
         // initialize our object
@@ -174,8 +174,10 @@ public class GameView extends SurfaceView implements Runnable {
         {
             dir=4;
         }
-        if(matrixPosition<=1 && dir==4)
-            dir=2;
+        if(matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
+            dir = 2;
+            matrixPosition=0;
+        }
     }
 
     // Draw the newly updated scene
@@ -205,7 +207,7 @@ public class GameView extends SurfaceView implements Runnable {
             // player draw logic
             paint.setColor(Color.BLUE);
 
-            canvas.drawRoundRect(new RectF(getRect((int)playerX+playerRadius, screenHeight-playerHeight-playerRadius-((dir==3 || dir==4)?matrixPosition:0),
+            canvas.drawRoundRect(new RectF(getRect((int)playerX+playerRadius, (dir == 2 ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-((dir == 3 || dir == 4) ? matrixPosition : 0)),
                     2*playerRadius, 2*playerRadius)), playerRadius/2, playerRadius/2, paint);
 
             paint.setColor(Color.RED);
