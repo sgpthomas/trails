@@ -31,7 +31,11 @@ public class Generator {
             for (int j = 0; j < w; j++) {
                 matrix[i][j] = 0;
             }
+<<<<<<< HEAD
             if (i < l - 8) {
+=======
+            if (i < l - 10) {
+>>>>>>> a6480df49726c25345bd1e299cc0c7afa249ff85
                 // loop through the cols and choose max 1s
                 for (int j = 0; j < max; ) {
                     int x = (int) (Math.random() * w);

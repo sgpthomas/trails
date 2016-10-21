@@ -29,7 +29,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
         // Tell the gameView resume method to execute
         gameView.resume();
     }
@@ -38,7 +37,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-
         // Tell the gameView pause method to execute
         gameView.pause();
     }
