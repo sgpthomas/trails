@@ -14,7 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.ksatgames.trails.GameOverScreen;
-import com.ksatgames.trails.MainActivity;
 
 import java.util.ArrayList;
 
@@ -287,7 +286,6 @@ public class GameView extends SurfaceView implements Runnable {
             // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
-
                 playerNewX = motionEvent.getX();
                 playerDeltaX = playerNewX - playerX;
 
