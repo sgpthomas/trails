@@ -14,7 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.ksatgames.trails.GameOverScreen;
-import com.ksatgames.trails.MainActivity;
 
 /**
  * Created by samthomas on 10/2/16.
@@ -77,7 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
-        playerRect = getRect((int)screenWidth/2 + playerRadius, screenHeight-playerHeight-playerRadius, 2*playerRadius, 2*playerRadius);
+        playerRect = getRect(screenWidth / 2 + playerRadius, screenHeight - playerHeight - playerRadius, 2 * playerRadius, 2 * playerRadius);
         playerX = (screenWidth / 2);
 
         // Initialize ourHolder and paint objects
@@ -143,7 +142,7 @@ public class GameView extends SurfaceView implements Runnable {
             {
                 for(int j = 0; j < submatrix[i].length; j++)
                 {
-                    //there's a two row padding for smooth transtions
+                    //there's a two row padding for smooth transitions
                     submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-4-passed+i][j];
                 }
             }
@@ -180,7 +179,7 @@ public class GameView extends SurfaceView implements Runnable {
             else
                 matrixPosition += speedPerSecond / fps;
             if (playerDeltaX != 0) {
-                if (Math.abs(playerX - playerNewX) < 15) {
+                if (Math.abs(playerX - playerNewX) < (2 * playerRadius)) {
                     playerDeltaX = 0;
                     playerNewX = 0;
                 } else {
@@ -204,6 +203,13 @@ public class GameView extends SurfaceView implements Runnable {
             dir = 2;
             matrixPosition=0;
         }
+
+        if (playerX < playerRadius) {
+            playerX = playerRadius;
+        } else if (playerX > screenWidth - playerRadius) {
+            playerX = screenWidth - playerRadius;
+        }
+
     }
 
     // Draw the newly updated scene
@@ -234,14 +240,12 @@ public class GameView extends SurfaceView implements Runnable {
             // player draw logic
             paint.setColor(Color.BLUE);
 
-        playerRect.set(getRect((int)playerX + playerRadius,
+            playerRect.set(getRect((int) playerX - playerRadius,
                     (dir == 2 ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-((dir == 3 || dir == 4) ? matrixPosition : 0)),
                     2*playerRadius, 2*playerRadius));
 
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
-            paint.setColor(Color.RED);
-            canvas.drawLine(0, matrixPosition, screenWidth, matrixPosition, paint);
-
+            
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
