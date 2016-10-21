@@ -16,6 +16,8 @@ import android.view.SurfaceView;
 import com.ksatgames.trails.GameOverScreen;
 import com.ksatgames.trails.MainActivity;
 
+import java.util.ArrayList;
+
 /**
  * Created by samthomas on 10/2/16.
  */
@@ -67,6 +69,8 @@ public class GameView extends SurfaceView implements Runnable {
     int blockSize;
     int dir=1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
+    ArrayList[] trail;
+
     public GameView(Context context) {
 
         // initialize our object
@@ -99,7 +103,6 @@ public class GameView extends SurfaceView implements Runnable {
         }
         // Set our boolean to true - game on!
         playing = true;
-
     }
 
     @Override
@@ -149,27 +152,21 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
-        if (matrixPosition<(-blockSize) && dir == 2)
-        {
+        if (matrixPosition<(-blockSize) && dir == 2) {
             matrixPosition=0;
             passed++;
-            for(int i=0; i<submatrix.length; i++)
-            {
-                for(int j=0; j<submatrix[i].length; j++)
-                {
-                    //there's a three row padding for smooth transtions
+            for(int i=0; i<submatrix.length; i++) {
+                for(int j=0; j<submatrix[i].length; j++) {
                     submatrix[i][j]=matrix[passed+i+1][j];
                 }
             }
         }
 
-        if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3)
-        {
+        if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3) {
             dir = 4;
         }
 
-        if(matrixPosition<=1 && dir == 4)
-        {
+        if(matrixPosition<=1 && dir == 4) {
             dir = 2;
         }
 
@@ -183,7 +180,8 @@ public class GameView extends SurfaceView implements Runnable {
                 if (Math.abs(playerX - playerNewX) < 15) {
                     playerDeltaX = 0;
                     playerNewX = 0;
-                } else {
+                }
+                else {
                     playerX += playerDeltaX / (playerSpeed);
                 }
             }
@@ -239,9 +237,19 @@ public class GameView extends SurfaceView implements Runnable {
                     2*playerRadius, 2*playerRadius));
 
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
-            paint.setColor(Color.RED);
-            canvas.drawLine(0, matrixPosition, screenWidth, matrixPosition, paint);
-
+            //paint.setColor(Color.RED);
+            //canvas.drawLine(0, matrixPosition, screenWidth, matrixPosition, paint);
+        /*
+            if(dir==1 || dir==3)
+                trail[passed].add(playerRect.centerX());
+            for(int i=0; i<passed; i++)
+            {
+                for (int j=0; j<trail[i].size(); j++)
+                {
+                    canvas.drawRoundRect(getRect(trail[i].get(j), , playerRadius/2, playerRadius/2, paint));
+                }
+            }
+        */
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -275,9 +283,7 @@ public class GameView extends SurfaceView implements Runnable {
     // So we can override this method and detect screen touches.
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-
             // Player has touched the screen
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
