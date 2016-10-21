@@ -14,7 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.ksatgames.trails.GameOverScreen;
-
 import java.util.ArrayList;
 
 /**
