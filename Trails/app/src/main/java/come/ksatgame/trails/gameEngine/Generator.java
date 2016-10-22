@@ -31,6 +31,7 @@ public class Generator {
             for (int j = 0; j < w; j++) {
                 matrix[i][j] = 0;
             }
+
             if (i < l - 10) {
                 // loop through the cols and choose max 1s
                 for (int j = 0; j < max; ) {

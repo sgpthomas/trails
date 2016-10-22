@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import com.ksatgames.trails.GameOverScreen;
 import java.util.ArrayList;
 
@@ -67,7 +66,7 @@ public class GameView extends SurfaceView implements Runnable {
     int blockSize;
     int dir=1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
-    ArrayList[] trail;
+    ArrayList<Integer>[] trail;
 
     public GameView(Context context) {
 
@@ -79,7 +78,7 @@ public class GameView extends SurfaceView implements Runnable {
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
 
-        playerRect = getRect((int)screenWidth/2 + playerRadius, screenHeight-playerHeight-playerRadius, 2*playerRadius, 2*playerRadius);
+        playerRect = getRect(screenWidth / 2 + playerRadius, screenHeight - playerHeight - playerRadius, 2 * playerRadius, 2 * playerRadius);
         playerX = (screenWidth / 2);
 
         // Initialize ourHolder and paint objects
@@ -99,6 +98,7 @@ public class GameView extends SurfaceView implements Runnable {
                 submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-4+i][j];
             }
         }
+        trail=new ArrayList[matrix.length];
         // Set our boolean to true - game on!
         playing = true;
     }
@@ -130,12 +130,10 @@ public class GameView extends SurfaceView implements Runnable {
     // In later projects we will have dozens (arrays) of objects.
     // We will also do other things like collision detection.
     public void update() {
-
         if (passed == matrix.length-screenHeight/blockSize-5) {
             dir = 3;
             passed = 0;
         }
-
         if (matrixPosition>blockSize && dir == 1)
         {
             matrixPosition=0;
@@ -144,12 +142,11 @@ public class GameView extends SurfaceView implements Runnable {
             {
                 for(int j = 0; j < submatrix[i].length; j++)
                 {
-                    //there's a two row padding for smooth transtions
+                    //there's a two row padding for smooth transitions
                     submatrix[i][j]=matrix[matrix.length-(screenHeight/blockSize)-4-passed+i][j];
                 }
             }
         }
-
         if (matrixPosition<(-blockSize) && dir == 2) {
             matrixPosition=0;
             passed++;
@@ -159,11 +156,9 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
-
         if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3) {
             dir = 4;
         }
-
         if(matrixPosition<=1 && dir == 4) {
             dir = 2;
         }
@@ -175,7 +170,7 @@ public class GameView extends SurfaceView implements Runnable {
             else
                 matrixPosition += speedPerSecond / fps;
             if (playerDeltaX != 0) {
-                if (Math.abs(playerX - playerNewX) < 15) {
+                if (Math.abs(playerX - playerNewX) < (2 * playerRadius)) {
                     playerDeltaX = 0;
                     playerNewX = 0;
                 }
@@ -196,10 +191,18 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+
         if(matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
             dir = 2;
             matrixPosition=0;
         }
+
+        if (playerX < playerRadius) {
+            playerX = playerRadius;
+        } else if (playerX > screenWidth - playerRadius) {
+            playerX = screenWidth - playerRadius;
+        }
+
     }
 
     // Draw the newly updated scene
@@ -230,14 +233,12 @@ public class GameView extends SurfaceView implements Runnable {
             // player draw logic
             paint.setColor(Color.BLUE);
 
-        playerRect.set(getRect((int)playerX + playerRadius,
+            playerRect.set(getRect((int) playerX - playerRadius,
                     (dir == 2 ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-((dir == 3 || dir == 4) ? matrixPosition : 0)),
                     2*playerRadius, 2*playerRadius));
 
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
-            //paint.setColor(Color.RED);
-            //canvas.drawLine(0, matrixPosition, screenWidth, matrixPosition, paint);
-        /*
+/*
             if(dir==1 || dir==3)
                 trail[passed].add(playerRect.centerX());
             for(int i=0; i<passed; i++)
@@ -247,7 +248,7 @@ public class GameView extends SurfaceView implements Runnable {
                     canvas.drawRoundRect(getRect(trail[i].get(j), , playerRadius/2, playerRadius/2, paint));
                 }
             }
-        */
+*/
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
