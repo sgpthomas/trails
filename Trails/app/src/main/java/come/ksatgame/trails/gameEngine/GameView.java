@@ -195,6 +195,33 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
+        //check intersection with trail
+        if(dir==2) {
+            boolean flag=false; //has itersection occured?
+        outer: for(int i=0; i<trail.size()-1; i++) {
+            int y1=trail.get(i).y;
+            int y2=trail.get(i+1).y;
+            //if the segment is in the same vertical region as the player
+            if (playerRect.contains(playerRect.centerX(),y1) || playerRect.contains(playerRect.centerX(),y1)
+                    || (y1>playerRect.centerY() && y2<playerRect.centerY())) {
+                int x1 = trail.get(i).x;
+                int x2 = trail.get(i + 1).x;
+                float slope = ((float) (y2 - y1)) / (x2 - x1);
+                for (int j = y2; j <= y1; j++) {
+                    int x = x1 + (int) (slope * (j - y2));
+                    if (playerRect.contains(x, j)) {
+                        flag = true;
+                        break outer;
+                    }
+                }
+            }
+        }
+            if(flag) {
+                Intent intent = new Intent(this.context, GameOverScreen.class);
+                this.context.startActivity(intent);
+            }
+        }
+
         if(matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
             dir = 2;
             matrixPosition=0;
@@ -242,7 +269,6 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             // player draw logic
-            paint.setColor(Color.BLUE);
 
             playerRect.set(getRect((int) playerX - playerRadius,
                     (dir == 2 ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-
@@ -250,14 +276,17 @@ public class GameView extends SurfaceView implements Runnable {
                     2*playerRadius, 2*playerRadius));
             //adding current player location to list of trail coordinates
             trail.add(new pair(playerRect.centerX(), playerRect.centerY()));
-            //drawing player
-            canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
 
             //now to draw trail
-            //paint.setAntiAlias(true); check out what this does: might be helpful in collision management
-            paint.setStrokeWidth(6f);
-            paint.setColor(Color.BLACK);
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setAntiAlias(true);
+            paint.setStrokeWidth(playerRadius*2);
+            if(dir==1 || dir==2) {
+                paint.setColor(Color.RED);
+            }
+            else {
+                paint.setColor(Color.BLUE);
+            }
+            paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
             //this could be optimized later by changing condition so that iteration stops at first out of screen
             for(int i=0; i<trail.size()-1; i++) {
@@ -266,6 +295,12 @@ public class GameView extends SurfaceView implements Runnable {
                 if(start.inScreen(screenHeight, screenWidth) && stop.inScreen(screenHeight, screenWidth))
                 canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
             }
+
+            //drawing player
+            paint.setColor(Color.BLUE);
+            paint.setStrokeWidth(10);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
