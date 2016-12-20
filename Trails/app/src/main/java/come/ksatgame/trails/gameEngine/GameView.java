@@ -14,7 +14,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.ksatgames.trails.GameOverScreen;
 import java.util.ArrayList;
-import com.ksatgames.trails.pair;
 
 /**
  * Created by samthomas on 10/2/16.
@@ -51,7 +50,7 @@ public class GameView extends SurfaceView implements Runnable {
     final int playerSpeed = 5;
     final int playerRadius = 25;
     final int playerHeight = 250;
-    float speedPerSecond = 400;
+    float speedPerSecond = 300;
 
     // Progress of matrix
     int matrixPosition = 0;
@@ -67,7 +66,7 @@ public class GameView extends SurfaceView implements Runnable {
     int blockSize;
     int dir=1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
-    ArrayList<pair> trail=new ArrayList<pair>(0);
+    ArrayList<Pair> trail=new ArrayList<Pair>(0);
     //stores coordinates between which trail is to be drawn
 
     public GameView(Context context) {
@@ -89,10 +88,10 @@ public class GameView extends SurfaceView implements Runnable {
         paint = new Paint();
 
         // get matrix
-        int cols = 7;
+        int cols = 5;
         blockSize = screenWidth / cols;
         //ten screen's worth falling blocks
-        int numBlocks=10;
+        int numBlocks=2;
         matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*numBlocks, cols, 2);
         submatrix=new int[screenHeight/blockSize+3][cols];
         for(int i=0; i<submatrix.length; i++)
@@ -132,10 +131,17 @@ public class GameView extends SurfaceView implements Runnable {
     // In later projects we will have dozens (arrays) of objects.
     // We will also do other things like collision detection.
     public void update() {
+        //when you reach the end of the maze, change direction to 3
         if (passed == matrix.length-screenHeight/blockSize-5) {
-            dir = 3;
-            passed = 0;
+            if(dir==1) {
+                passed = 0;
+                dir = 3;
+            }
+            if(dir==2) {
+                dir=4;
+            }
         }
+        //get in a fresh maze row while going up
         if (matrixPosition>blockSize && dir == 1)
         {
             matrixPosition=0;
@@ -149,6 +155,7 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+        //getting in a fresh row while going down
         if (matrixPosition<(-blockSize) && dir == 2) {
             matrixPosition=0;
             passed++;
@@ -158,11 +165,19 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+        //bouncing off the top of the screen and starting downwards
         if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3) {
             dir = 4;
         }
-        if(matrixPosition<=1 && dir == 4) {
+        //resume downward matrix movement
+//        if(matrixPosition<=1 && dir == 4) {
+//            dir = 2;
+//        }
+
+        //start moving the matrix downwards agian after ball raches a certain height
+        if( matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
             dir = 2;
+            matrixPosition=0;
         }
 
         // smooth movement
@@ -182,49 +197,56 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
-        for (int y = 0; y < submatrix.length; y++) {
-            for (int x = 0; x < submatrix[y].length; x++) {
-                if (submatrix[y][x] == 1) {
-                    Rect subRect = getRect(x * blockSize, (y - 1) * blockSize +
-                            ((dir == 1 || dir == 2) ? matrixPosition : 0), blockSize, blockSize);
-                    if (Rect.intersects(playerRect, subRect)) {
-                        Intent intent = new Intent(this.context, GameOverScreen.class);
-                        this.context.startActivity(intent);
+        //collision handling
+        if(playerRect.centerY()>(playerRadius+3)) {
+            //so that the player doesn't collide with an unseen rectangle at the top of the screen
+            for (int y = 0; y < submatrix.length; y++) {
+                for (int x = 0; x < submatrix[y].length; x++) {
+                    if (submatrix[y][x] == 1) {
+                        Rect subRect = getRect(x * blockSize, (y - 1) * blockSize +
+                                ((dir == 1 || dir == 2) ? matrixPosition : 0), blockSize, blockSize);
+                        if (Rect.intersects(playerRect, subRect)) {
+                            Intent intent = new Intent(this.context, GameOverScreen.class);
+                            this.context.startActivity(intent);
+                        }
                     }
                 }
             }
         }
 
         //check intersection with trail
-        if(dir==2) {
-            boolean flag=false; //has itersection occured?
-        outer: for(int i=0; i<trail.size()-1; i++) {
-            int y1=trail.get(i).y;
-            int y2=trail.get(i+1).y;
-            //if the segment is in the same vertical region as the player
-            if (playerRect.contains(playerRect.centerX(),y1) || playerRect.contains(playerRect.centerX(),y1)
-                    || (y1>playerRect.centerY() && y2<playerRect.centerY())) {
-                int x1 = trail.get(i).x;
-                int x2 = trail.get(i + 1).x;
-                float slope = ((float) (y2 - y1)) / (x2 - x1);
-                for (int j = y2; j <= y1; j++) {
-                    int x = x1 + (int) (slope * (j - y2));
-                    if (playerRect.contains(x, j)) {
-                        flag = true;
-                        break outer;
+        if(dir!=4) {
+            boolean flag = false; //has itersection occured?
+            //consider optimization by deciding which variables to store as local and which to just call playerRect for each time
+            outer:
+            for (int i = 0; i < trail.size() - 2; i++) {
+                int y1 = trail.get(i).y;
+                int y2 = trail.get(i + 1).y;
+                //if the segment is in the same vertical region as the player
+                if (y2>y1 && playerRect.contains(playerRect.centerX(), y1)
+                        || playerRect.contains(playerRect.centerX(), y1)
+                        || (y1 > playerRect.centerY() && y2 < playerRect.centerY())) {
+                    int x1 = trail.get(i).x;
+                    int x2 = trail.get(i + 1).x;
+                    if(x1==x2)  {
+                        flag=playerRect.contains(x1, playerRect.centerY());
+                        }
+                    else {
+                        float slope = ((float) (y2 - y1)) / (x2 - x1);
+                        for (int j = y2; j < y1; j++) {
+                            int x = x1 + (int) (slope * (j - y2));
+                            if (playerRect.contains(x, j)) {
+                                flag = true;
+                                break outer;
+                            }
+                        }
                     }
                 }
             }
-        }
-            if(flag) {
+            if (flag) {
                 Intent intent = new Intent(this.context, GameOverScreen.class);
                 this.context.startActivity(intent);
             }
-        }
-
-        if(matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
-            dir = 2;
-            matrixPosition=0;
         }
 
         if (playerX < playerRadius) {
@@ -233,7 +255,7 @@ public class GameView extends SurfaceView implements Runnable {
             playerX = screenWidth - playerRadius;
         }
     if(trail.size()>0) {
-        for (pair p : trail) {
+        for (Pair p : trail) {
             if (dir == 1)
                 p.shiftUp((int) (speedPerSecond / fps));
             if (dir == 2)
@@ -275,7 +297,7 @@ public class GameView extends SurfaceView implements Runnable {
                             ((dir == 3 || dir == 4) ? matrixPosition : 0)),
                     2*playerRadius, 2*playerRadius));
             //adding current player location to list of trail coordinates
-            trail.add(new pair(playerRect.centerX(), playerRect.centerY()));
+            trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
             //now to draw trail
             paint.setAntiAlias(true);
@@ -290,10 +312,19 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStrokeJoin(Paint.Join.ROUND);
             //this could be optimized later by changing condition so that iteration stops at first out of screen
             for(int i=0; i<trail.size()-1; i++) {
-                pair start=trail.get(i);
-                pair stop=trail.get(i+1);
-                if(start.inScreen(screenHeight, screenWidth) && stop.inScreen(screenHeight, screenWidth))
-                canvas.drawLine(start.x, start.y, stop.x, stop.y, paint);
+                Pair start=trail.get(i);
+                Pair stop=trail.get(i+1);
+                if(start.inScreen(screenHeight, screenWidth) || stop.inScreen(screenHeight, screenWidth)) {
+                    if(start.y>stop.y) {
+                        if(dir!=4) paint.setColor(Color.RED);
+                        canvas.drawLine(start.x, start.y + 4, stop.x, stop.y - 4, paint);
+                    }
+                    else    {
+                        if(dir!=4)
+                        paint.setColor(Color.GREEN);
+                        canvas.drawLine(start.x, start.y - 4, stop.x, stop.y + 4, paint);
+                    }
+                }
             }
 
             //drawing player

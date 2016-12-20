@@ -1,15 +1,15 @@
-package com.ksatgames.trails;
+package come.ksatgame.trails.gameEngine;
 
 /**
- * class represents ordered pair- to use in keeping track of trail coordinates
+ * class represents ordered Pair- to use in keeping track of trail coordinates
  * x controls widthwise position.
  * y controls heightwise position
  * Created by aditi on 12/18/16.
  */
-public class pair   {
+public class Pair {
     public int x;
     public int y;
-    public pair(int X, int Y)  {
+    public Pair(int X, int Y)  {
         x=X;
         y=Y;
     }
