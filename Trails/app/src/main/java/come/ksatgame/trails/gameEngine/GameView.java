@@ -128,19 +128,19 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
     // Everything that needs to be updated goes in here
-    // In later projects we will have dozens (arrays) of objects.
     // We will also do other things like collision detection.
     public void update() {
-        //when you reach the end of the maze, change direction to 3
+        //when you reach the end of the maze, change direction to 3 or 4
         if (passed == matrix.length-screenHeight/blockSize-5) {
             if(dir==1) {
-                passed = 0;
                 dir = 3;
             }
             if(dir==2) {
                 dir=4;
+                matrixPosition=screenHeight-(playerHeight+playerRadius)*2;
             }
         }
+
         //get in a fresh maze row while going up
         if (matrixPosition>blockSize && dir == 1)
         {
@@ -155,6 +155,7 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+
         //getting in a fresh row while going down
         if (matrixPosition<(-blockSize) && dir == 2) {
             matrixPosition=0;
@@ -168,14 +169,23 @@ public class GameView extends SurfaceView implements Runnable {
         //bouncing off the top of the screen and starting downwards
         if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3) {
             dir = 4;
+            passed=0;
         }
-        //resume downward matrix movement
-//        if(matrixPosition<=1 && dir == 4) {
-//            dir = 2;
-//        }
 
-        //start moving the matrix downwards agian after ball raches a certain height
-        if( matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
+        //bouncing off the bottom of the screen
+        if(dir==4 && playerRect.centerY()>=screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
+            //the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
+            dir = 3;
+            passed=0;
+        }
+
+        //resume matrix motion after ball has bounced off bottom and reached a certain height
+        if(dir==3 && passed==0 && playerRect.centerY()<=screenHeight-playerHeight-playerRadius)    {
+            dir=1;
+        }
+
+        //start moving the matrix downwards again after ball reaches a certain height
+        if(passed < 1 && matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
             dir = 2;
             matrixPosition=0;
         }
@@ -215,7 +225,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         //check intersection with trail
-        if(dir!=4) {
+        if(!(dir==4 && matrixPosition>=screenHeight-(playerHeight+playerRadius)*2)) {
             boolean flag = false; //has itersection occured?
             //consider optimization by deciding which variables to store as local and which to just call playerRect for each time
             outer:
@@ -291,7 +301,6 @@ public class GameView extends SurfaceView implements Runnable {
             }
 
             // player draw logic
-
             playerRect.set(getRect((int) playerX - playerRadius,
                     (dir == 2 ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-
                             ((dir == 3 || dir == 4) ? matrixPosition : 0)),
@@ -302,12 +311,8 @@ public class GameView extends SurfaceView implements Runnable {
             //now to draw trail
             paint.setAntiAlias(true);
             paint.setStrokeWidth(playerRadius*2);
-            if(dir==1 || dir==2) {
-                paint.setColor(Color.RED);
-            }
-            else {
-                paint.setColor(Color.BLUE);
-            }
+            boolean collisionValid=!(dir==4 && matrixPosition>=screenHeight-(playerHeight+playerRadius)*2);
+            if(!collisionValid) {paint.setColor(Color.BLUE);}
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
             //this could be optimized later by changing condition so that iteration stops at first out of screen
@@ -316,12 +321,11 @@ public class GameView extends SurfaceView implements Runnable {
                 Pair stop=trail.get(i+1);
                 if(start.inScreen(screenHeight, screenWidth) || stop.inScreen(screenHeight, screenWidth)) {
                     if(start.y>stop.y) {
-                        if(dir!=4) paint.setColor(Color.RED);
+                        if(collisionValid) paint.setColor(Color.RED);
                         canvas.drawLine(start.x, start.y + 4, stop.x, stop.y - 4, paint);
                     }
                     else    {
-                        if(dir!=4)
-                        paint.setColor(Color.GREEN);
+                        if(collisionValid) paint.setColor(Color.GREEN);
                         canvas.drawLine(start.x, start.y - 4, stop.x, stop.y + 4, paint);
                     }
                 }
