@@ -52,7 +52,8 @@ public class GameView extends SurfaceView implements Runnable {
     final int playerSpeed = 5;
     final int playerRadius = 25;
     final int playerHeight = 250;
-    float speedPerSecond = 400;
+    float speedPerSecond ;
+    int length;
 
     // Progress of matrix
     int matrixPosition = 0;
@@ -70,7 +71,7 @@ public class GameView extends SurfaceView implements Runnable {
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
     ArrayList[] trail;
 
-    public GameView(Context context) {
+    public GameView(Context context, int length, float speedPerSecond) {
 
         // initialize our object
         super(context);
@@ -79,6 +80,9 @@ public class GameView extends SurfaceView implements Runnable {
         // initialize window dimensions
         screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
         screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+
+        this.length = length;
+        this.speedPerSecond = speedPerSecond;
 
         playerRect = getRect(screenWidth / 2 + playerRadius, screenHeight - playerHeight - playerRadius, 2 * playerRadius, 2 * playerRadius);
         playerX = (screenWidth / 2);
@@ -91,7 +95,7 @@ public class GameView extends SurfaceView implements Runnable {
         int cols = 7;
         blockSize = screenWidth / cols;
         //ten screen's worth falling blocks
-        matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*10, cols, 2);
+        matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*this.length, cols, 2);
         submatrix=new int[screenHeight/blockSize+3][cols];
         for(int i=0; i<submatrix.length; i++)
         {
@@ -243,6 +247,12 @@ public class GameView extends SurfaceView implements Runnable {
                     2*playerRadius, 2*playerRadius));
 
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
+
+            paint.setColor(Color.RED);
+
+            // pause button
+            canvas.drawRoundRect(new RectF(getRect(screenWidth-100, 25, 25, 100)), 10, 10, paint);
+            canvas.drawRoundRect(new RectF(getRect(screenWidth-60, 25, 25, 100)), 10, 10, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);

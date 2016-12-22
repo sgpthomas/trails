@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // Initialize gameView and set it as the view
-        gameView = new GameView(this);
+        gameView = new GameView(this, 10, 400);
         setContentView(gameView);
 
     }
