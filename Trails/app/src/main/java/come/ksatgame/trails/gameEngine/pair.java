@@ -1,4 +1,4 @@
-package com.ksatgames.trails;
+package come.ksatgame.trails.gameEngine;
 
 /**
  * class represents ordered pair- to use in keeping track of trail coordinates
