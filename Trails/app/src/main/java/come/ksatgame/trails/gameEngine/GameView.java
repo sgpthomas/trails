@@ -133,9 +133,11 @@ public class GameView extends SurfaceView implements Runnable {
         //when you reach the end of the maze, change direction to 3 or 4
         if (passed == matrix.length-screenHeight/blockSize-5) {
             if(dir==1) {
+                System.out.println("Direction changed to 3 :"+playerRect.centerY());
                 dir = 3;
             }
             if(dir==2) {
+                System.out.println("Direction changed to 4 :"+playerRect.centerY());
                 dir=4;
                 matrixPosition=screenHeight-(playerHeight+playerRadius)*2;
             }
@@ -168,6 +170,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
         //bouncing off the top of the screen and starting downwards
         if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3) {
+            System.out.println("Direction changed to 4 :"+playerRect.centerY());
             dir = 4;
             passed=0;
         }
@@ -175,17 +178,20 @@ public class GameView extends SurfaceView implements Runnable {
         //bouncing off the bottom of the screen
         if(dir==4 && playerRect.centerY()>=screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
             //the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
+            System.out.println("Direction changed to 3 :"+playerRect.centerY());
             dir = 3;
             passed=0;
         }
 
         //resume matrix motion after ball has bounced off bottom and reached a certain height
-        if(dir==3 && passed==0 && playerRect.centerY()<=screenHeight-playerHeight-playerRadius)    {
+        if(dir==3 && passed==0 && playerRect.centerY()<=screenHeight-playerHeight-playerRadius+2*matrixPosition)    {
+            System.out.println("Direction changed to 1 :"+playerRect.centerY());
             dir=1;
         }
 
         //start moving the matrix downwards again after ball reaches a certain height
         if(passed < 1 && matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
+            System.out.println("Direction changed to 2 :"+playerRect.centerY());
             dir = 2;
             matrixPosition=0;
         }
@@ -216,6 +222,7 @@ public class GameView extends SurfaceView implements Runnable {
                         Rect subRect = getRect(x * blockSize, (y - 1) * blockSize +
                                 ((dir == 1 || dir == 2) ? matrixPosition : 0), blockSize, blockSize);
                         if (Rect.intersects(playerRect, subRect)) {
+                            System.out.println("Collided with tile at" + playerRect.centerY());
                             Intent intent = new Intent(this.context, GameOverScreen.class);
                             this.context.startActivity(intent);
                         }
@@ -226,16 +233,16 @@ public class GameView extends SurfaceView implements Runnable {
 
         //check intersection with trail
         if(!(dir==4 && matrixPosition>=screenHeight-(playerHeight+playerRadius)*2)) {
-            boolean flag = false; //has itersection occured?
+            boolean flag = false; //has intersection occured?
             //consider optimization by deciding which variables to store as local and which to just call playerRect for each time
             outer:
-            for (int i = 0; i < trail.size() - 2; i++) {
+            for (int i = 0; i < trail.size() - 3; i++) {
                 int y1 = trail.get(i).y;
                 int y2 = trail.get(i + 1).y;
                 //if the segment is in the same vertical region as the player
-                if (y2>y1 && playerRect.contains(playerRect.centerX(), y1)
+                if (y2<y1 && (playerRect.contains(playerRect.centerX(), y1)
                         || playerRect.contains(playerRect.centerX(), y1)
-                        || (y1 > playerRect.centerY() && y2 < playerRect.centerY())) {
+                        || (y1 > playerRect.centerY() && y2 < playerRect.centerY()))) {
                     int x1 = trail.get(i).x;
                     int x2 = trail.get(i + 1).x;
                     if(x1==x2)  {
@@ -244,8 +251,9 @@ public class GameView extends SurfaceView implements Runnable {
                     else {
                         float slope = ((float) (y2 - y1)) / (x2 - x1);
                         for (int j = y2; j < y1; j++) {
-                            int x = x1 + (int) (slope * (j - y2));
+                            int x = x1 + (int) ((j - y2)/slope);
                             if (playerRect.contains(x, j)) {
+                                //might need to test points around this region for slower systems
                                 flag = true;
                                 break outer;
                             }
@@ -254,6 +262,7 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
             if (flag) {
+                System.out.println("Collided with trail at " + playerRect.centerY());
                 Intent intent = new Intent(this.context, GameOverScreen.class);
                 this.context.startActivity(intent);
             }
