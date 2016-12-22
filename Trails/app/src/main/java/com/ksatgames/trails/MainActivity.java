@@ -32,7 +32,6 @@ public class MainActivity extends Activity {
         // Tell the gameView resume method to execute
         gameView.resume();
     }
-
     // This method executes when the player quits the game
     @Override
     protected void onPause() {
