@@ -314,7 +314,7 @@ public class GameView extends SurfaceView implements Runnable {
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
             //now to draw trail
-            paint.setAntiAlias(false);
+            paint.setAntiAlias(true);
             paint.setStrokeWidth(playerRadius*2);
             boolean collisionValid=!(dir==4 && matrixPosition>=screenHeight-(playerHeight+playerRadius)*2);
             if(!collisionValid) {paint.setColor(Color.BLUE);}
