@@ -63,10 +63,12 @@ public class GameView extends SurfaceView implements Runnable {
     // matrix
     int[][] matrix;
     int[][] submatrix;
-    int passed=0; //counts number of blocks that have already fallen through
+    int passed = 0; // counts number of blocks that have already fallen through
     int blockSize;
-    int dir=1;   // 1 is upwards, 2 is down,
+    // int dir = 1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
+    enum Direction { UP, DOWN, STOP_UP, STOP_DOWN; }
+    Direction dir = Direction.UP;
     ArrayList<Pair> trail = new ArrayList<>(0);
     // stores coordinates between which trail is to be drawn
 
@@ -135,19 +137,19 @@ public class GameView extends SurfaceView implements Runnable {
     public void update() {
         // when you reach the end of the maze, change direction to 3 or 4
         if (passed == matrix.length-screenHeight/blockSize-5) {
-            if (dir == 1) {
-                dir = 3;
+            if (dir == Direction.UP) {
+                dir = Direction.STOP_UP;
             }
 
-            if (dir == 2) {
-                dir = 4;
+            if (dir == Direction.DOWN) {
+                dir = Direction.STOP_DOWN;
                 matrixPosition = screenHeight-(playerHeight+playerRadius)*2;
             }
         }
 
         // get in a fresh maze row while going up
-        if (matrixPosition > blockSize && dir == 1) {
-            matrixPosition=0;
+        if (matrixPosition > blockSize && dir == Direction.UP) {
+            matrixPosition = 0;
             passed++;
             score++;
             for (int i = 0; i < submatrix.length; i++) {
@@ -159,7 +161,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         // getting in a fresh row while going down
-        if (matrixPosition < (-blockSize) && dir == 2) {
+        if (matrixPosition < (-blockSize) && dir == Direction.DOWN) {
             matrixPosition = 0;
             passed++;
             score++;
@@ -170,34 +172,34 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
         // bouncing off the top of the screen and starting downwards
-        if (matrixPosition >= screenHeight-playerHeight-playerRadius-2 && dir == 3) {
-            dir = 4;
+        if (matrixPosition >= screenHeight-playerHeight-playerRadius-2 && dir == Direction.STOP_UP) {
+            dir = Direction.STOP_DOWN;
             passed = 0;
             score += 100;
         }
 
         // bouncing off the bottom of the screen
-        if(dir == 4 && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
+        if(dir == Direction.STOP_DOWN && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
             // the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
-            dir = 3;
+            dir = Direction.STOP_UP;
             passed = 0;
             score += 100;
         }
 
         //r esume matrix motion after ball has bounced off bottom and reached a certain height
-        if(dir == 3 && passed == 0 && playerRect.centerY() <= screenHeight-playerHeight-playerRadius+2*matrixPosition)    {
-            dir = 1;
+        if(dir == Direction.STOP_UP && passed == 0 && playerRect.centerY() <= screenHeight-playerHeight-playerRadius+2*matrixPosition) {
+            dir = Direction.UP;
         }
 
         // start moving the matrix downwards again after ball reaches a certain height
-        if(passed < 1 && matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir==4) {
-            dir = 2;
-            matrixPosition=0;
+        if(passed < 1 && matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir == Direction.STOP_DOWN) {
+            dir = Direction.DOWN;
+            matrixPosition = 0;
         }
 
         // smooth movement
         if (fps != 0) {
-            if (dir == 4 || dir == 2)
+            if (dir == Direction.DOWN || dir == Direction.STOP_DOWN)
                 matrixPosition -= speedPerSecond / fps;
             else
                 matrixPosition += speedPerSecond / fps;
@@ -219,7 +221,7 @@ public class GameView extends SurfaceView implements Runnable {
                 for (int x = 0; x < submatrix[y].length; x++) {
                     if (submatrix[y][x] == 1) {
                         Rect subRect = getRect(x * blockSize, (y - 1) * blockSize +
-                                ((dir == 1 || dir == 2) ? matrixPosition : 0), blockSize, blockSize);
+                                ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0), blockSize, blockSize);
                         if (Rect.intersects(playerRect, subRect)) {
                             endGame();
                         }
@@ -229,7 +231,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         // check intersection with trail
-        if (!(dir == 4 && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2)) {
+        if (!(dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2)) {
             boolean flag = false; // has intersection occured?
             // consider optimization by deciding which variables to store as local and which to just call playerRect for each time
             outer: for (int i = 0; i < trail.size() - 3; i++) {
@@ -270,9 +272,9 @@ public class GameView extends SurfaceView implements Runnable {
 
         if (trail.size() > 0) {
             for (Pair p : trail) {
-                if (dir == 1)
+                if (dir == Direction.UP)
                     p.shiftUp((int) (speedPerSecond / fps));
-                else if (dir == 2)
+                else if (dir == Direction.DOWN)
                     p.shiftDown((int) (speedPerSecond / fps));
             }
         }
@@ -298,7 +300,7 @@ public class GameView extends SurfaceView implements Runnable {
             for (int y = 0; y < submatrix.length; y++) {
                 for (int x = 0; x < submatrix[y].length; x++) {
                     if (submatrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x * blockSize, (y - 1) * blockSize + ((dir == 1 || dir == 2)
+                        canvas.drawRect(getRect(x * blockSize, (y - 1) * blockSize + ((dir == Direction.UP || dir == Direction.DOWN)
                                 ? matrixPosition : 0), blockSize, blockSize), paint);
                     }
                 }
@@ -306,16 +308,16 @@ public class GameView extends SurfaceView implements Runnable {
 
             // player draw logic
             playerRect.set(getRect((int) playerX - playerRadius,
-                    (dir == 2 ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-
-                            ((dir == 3 || dir == 4) ? matrixPosition : 0)),
+                    (dir == Direction.DOWN ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-
+                            ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
                     2*playerRadius, 2*playerRadius));
-            //adding current player location to list of trail coordinates
+            // adding current player location to list of trail coordinates
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
-            //now to draw trail
+            // now to draw trail
             paint.setAntiAlias(true);
             paint.setStrokeWidth(playerRadius*2);
-            boolean collisionValid = !(dir == 4 && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2);
+            boolean collisionValid = !(dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2);
             if (!collisionValid) paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
