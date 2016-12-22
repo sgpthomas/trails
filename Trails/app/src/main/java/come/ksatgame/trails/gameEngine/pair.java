@@ -19,7 +19,7 @@ public class Pair {
     }
 
     /**
-     * shifts the point up by offset
+     * shifts the point down by offset while screen scrolling up
      * @param offset
      */
     public void shiftUp(int offset)  {
