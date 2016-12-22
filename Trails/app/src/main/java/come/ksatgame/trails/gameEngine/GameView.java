@@ -51,7 +51,7 @@ public class GameView extends SurfaceView implements Runnable {
     final int playerRadius = 25;
     final int playerHeight = 250;
     float speedPerSecond = 300;
-
+    int score=0;
     // Progress of matrix
     int matrixPosition = 0;
 
@@ -146,6 +146,7 @@ public class GameView extends SurfaceView implements Runnable {
         {
             matrixPosition=0;
             passed++;
+            score++;
             for (int i = 0; i < submatrix.length; i++)
             {
                 for(int j = 0; j < submatrix[i].length; j++)
@@ -160,6 +161,7 @@ public class GameView extends SurfaceView implements Runnable {
         if (matrixPosition<(-blockSize) && dir == 2) {
             matrixPosition=0;
             passed++;
+            score++;
             for(int i=0; i<submatrix.length; i++) {
                 for(int j=0; j<submatrix[i].length; j++) {
                     submatrix[i][j]=matrix[passed+i+1][j];
@@ -170,6 +172,7 @@ public class GameView extends SurfaceView implements Runnable {
         if(matrixPosition>=screenHeight-playerHeight-playerRadius-2 && dir == 3) {
             dir = 4;
             passed=0;
+            score+=100;
         }
 
         //bouncing off the bottom of the screen
@@ -177,6 +180,7 @@ public class GameView extends SurfaceView implements Runnable {
             //the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
             dir = 3;
             passed=0;
+            score+=100;
         }
 
         //resume matrix motion after ball has bounced off bottom and reached a certain height
@@ -317,6 +321,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
             //this could be optimized later by changing condition so that iteration stops at first out of screen
+            //or one could try and use Path class
             for(int i=0; i<trail.size()-1; i++) {
                 Pair start=trail.get(i);
                 Pair stop=trail.get(i+1);
@@ -331,12 +336,22 @@ public class GameView extends SurfaceView implements Runnable {
                     }
                 }
             }
+//            float t[]=new float[trail.size()];
+//            for(int i=0; i<trail.size();i++){
+//                t[i]=trail.get(i).y;
+//            }
+//            canvas.drawLines(t,0,2, paint);
 
             //drawing player
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
+
+            paint.setColor(Color.argb(255, 250, 100, 200));   //something that stands out against white and black
+            //print score
+            paint.setTextSize(70);
+            canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
