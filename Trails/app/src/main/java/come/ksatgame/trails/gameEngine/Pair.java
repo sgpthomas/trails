@@ -7,15 +7,17 @@ package come.ksatgame.trails.gameEngine;
  * Created by aditi on 12/18/16.
  */
 public class Pair {
+
     public int x;
     public int y;
-    public Pair(int X, int Y)  {
-        x=X;
-        y=Y;
+
+    public Pair(int x, int y)  {
+        this.x = x;
+        this.y = y;
     }
 
     public void shiftDown(int offset)  {
-        y=y-offset;
+        y = y - offset;
     }
 
     /**
@@ -23,7 +25,7 @@ public class Pair {
      * @param offset
      */
     public void shiftUp(int offset)  {
-        y=y+offset;
+        y = y + offset;
     }
 
     /**
@@ -33,11 +35,7 @@ public class Pair {
      * @return  whether this point is in screen
      */
     public boolean inScreen(int top, int right) {
-        if (x < 0 || y < 0)
-            return false;
-        if (x > right || y > top)
-            return false;
-        return true;
+        return !(x < 0 || y < 0 || x > right || y > top);
     }
 
 }
