@@ -8,10 +8,6 @@ public class Generator {
 
     private static Generator instance;
 
-    private Generator() {
-        
-    }
-
     public static Generator getInstance() {
         if (instance == null)
             instance = new Generator();
@@ -19,8 +15,8 @@ public class Generator {
     }
 
 
-    public int[][] genMatrix(int l, int w, int max) // generated original matrix; to be called before start of game
-    {
+    // generated original matrix; to be called before start of game
+    public int[][] genMatrix(int l, int w, int max) {
         int track = (int) (Math.random()*w); // keeps track of the usable track
         int matrix[][] = new int[l][w]; // this is what we are generating
 
@@ -52,7 +48,6 @@ public class Generator {
                 }
                 start++;
                 int j = track - start;
-                boolean b = true;
                 while (start + j < matrix[i].length) {
                     if (matrix[i][start + j] != 0)
                         break;
