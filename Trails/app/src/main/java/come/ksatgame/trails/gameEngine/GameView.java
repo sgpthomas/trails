@@ -220,7 +220,7 @@ public class GameView extends SurfaceView implements Runnable {
             for (int y = 0; y < submatrix.length; y++) {
                 for (int x = 0; x < submatrix[y].length; x++) {
                     if (submatrix[y][x] == 1) {
-                        Rect subRect = getRect(x * blockSize, (y - 1) * blockSize +
+                        Rect subRect = getRect(x * blockSize, (y - 2) * blockSize +
                                 ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0), blockSize, blockSize);
                         if (Rect.intersects(playerRect, subRect)) {
                             endGame();
@@ -300,7 +300,7 @@ public class GameView extends SurfaceView implements Runnable {
             for (int y = 0; y < submatrix.length; y++) {
                 for (int x = 0; x < submatrix[y].length; x++) {
                     if (submatrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x * blockSize, (y - 1) * blockSize + ((dir == Direction.UP || dir == Direction.DOWN)
+                        canvas.drawRect(getRect(x * blockSize, (y - 2) * blockSize + ((dir == Direction.UP || dir == Direction.DOWN)
                                 ? matrixPosition : 0), blockSize, blockSize), paint);
                     }
                 }
