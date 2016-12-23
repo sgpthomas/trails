@@ -179,20 +179,20 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         // bouncing off the bottom of the screen
-        if(dir == Direction.STOP_DOWN && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
+        if (dir == Direction.STOP_DOWN && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
             // the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
             dir = Direction.STOP_UP;
             passed = 0;
             score += 100;
         }
 
-        //r esume matrix motion after ball has bounced off bottom and reached a certain height
-        if(dir == Direction.STOP_UP && passed == 0 && playerRect.centerY() <= screenHeight-playerHeight-playerRadius+2*matrixPosition) {
+        // resume matrix motion after ball has bounced off bottom and reached a certain height
+        if (dir == Direction.STOP_UP && passed == 0 && playerRect.centerY() <= screenHeight-playerHeight-playerRadius+2*matrixPosition) {
             dir = Direction.UP;
         }
 
         // start moving the matrix downwards again after ball reaches a certain height
-        if(passed < 1 && matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir == Direction.STOP_DOWN) {
+        if (passed < 1 && matrixPosition<=screenHeight-(playerHeight+playerRadius)*2 && dir == Direction.STOP_DOWN) {
             dir = Direction.DOWN;
             matrixPosition = 0;
         }
@@ -231,10 +231,10 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         // check intersection with trail
-        //first, find out which index you have to go to to not count the trail which the plaer just left
-        int lastIndex=0;
-        for(int i=trail.size()-1; i>=0; i--) {
-            if(!playerRect.contains(trail.get(i).x, trail.get(i).y)) {
+        // first, find out which index you have to go to to not count the trail which the player just left
+        int lastIndex = 0;
+        for (int i = trail.size()-1; i >= 0; i--) {
+            if (!playerRect.contains(trail.get(i).x, trail.get(i).y)) {
                 lastIndex = i;
                 break;
             }
@@ -252,7 +252,7 @@ public class GameView extends SurfaceView implements Runnable {
                     int x1 = trail.get(i).x;
                     int x2 = trail.get(i + 1).x;
                     if (x1 == x2) {
-                        flag=playerRect.contains(x1, playerRect.centerY());
+                        flag = playerRect.contains(x1, playerRect.centerY());
                     } else {
                         float slope = ((float) (y2 - y1)) / (x2 - x1);
                         for (int j = y2; j < y1; j++) {
@@ -278,13 +278,11 @@ public class GameView extends SurfaceView implements Runnable {
             playerX = screenWidth - playerRadius;
         }
 
-        if (trail.size() > 0) {
-            for (Pair p : trail) {
-                if (dir == Direction.UP)
-                    p.shiftUp((int) (speedPerSecond / fps));
-                else if (dir == Direction.DOWN)
-                    p.shiftDown((int) (speedPerSecond / fps));
-            }
+        for (Pair p : trail) {
+            if (dir == Direction.UP)
+                p.shiftUp((int) (speedPerSecond / fps));
+            else if (dir == Direction.DOWN)
+                p.shiftDown((int) (speedPerSecond / fps));
         }
     }
 
@@ -296,7 +294,7 @@ public class GameView extends SurfaceView implements Runnable {
             canvas = ourHolder.lockCanvas();
 
             // Draw the background color
-            canvas.drawColor(Color.argb(255,  255, 255, 255)); // white
+            canvas.drawColor(Color.argb(255, 255, 255, 255)); // white
 
             paint.setAntiAlias(true);
             // set color of rectangles
