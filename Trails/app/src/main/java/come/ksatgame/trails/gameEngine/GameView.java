@@ -57,8 +57,8 @@ public class GameView extends SurfaceView implements Runnable {
     int matrixPosition = 0;
 
     // window dimensions
-    int screenWidth;
-    int screenHeight;
+    static int screenWidth = 0;
+    static int screenHeight = 0;
 
     // matrix
     int[][] matrix;
@@ -79,8 +79,8 @@ public class GameView extends SurfaceView implements Runnable {
         this.context = context;
 
         // initialize window dimensions
-        screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
-        screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        screenHeight = getScreenHeight();
+        screenWidth = getScreenWidth();
 
         playerRect = getRect(screenWidth / 2 + playerRadius, screenHeight - playerHeight - playerRadius,
                 2 * playerRadius, 2 * playerRadius);
@@ -108,6 +108,20 @@ public class GameView extends SurfaceView implements Runnable {
 
         // Set our boolean to true - game on!
         playing = true;
+    }
+
+    public static int getScreenHeight() {
+        if (screenHeight == 0) {
+            screenHeight = Resources.getSystem().getDisplayMetrics().heightPixels;
+        }
+        return screenHeight;
+    }
+
+    public static int getScreenWidth() {
+        if (screenWidth == 0) {
+            screenWidth = Resources.getSystem().getDisplayMetrics().widthPixels;
+        }
+        return screenWidth;
     }
 
     @Override
@@ -331,7 +345,7 @@ public class GameView extends SurfaceView implements Runnable {
             for (int i = 0; i < trail.size()-1; i++) {
                 Pair start = trail.get(i);
                 Pair stop = trail.get(i+1);
-                if (start.inScreen(screenHeight, screenWidth) || stop.inScreen(screenHeight, screenWidth)) {
+                if (start.inScreen() || stop.inScreen()) {
                     if(start.y > stop.y) {
                         if (collisionValid) paint.setColor(Color.RED);
                         canvas.drawLine(start.x, start.y + 7, stop.x, stop.y - 7, paint);
