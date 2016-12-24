@@ -29,13 +29,10 @@ public class Pair {
     }
 
     /**
-     *
-     * @param top screen height- the highest height coord. permissible to count as in screen
-     * @param right screen width- the highest width coord. permissible to count as in screen
      * @return  whether this point is in screen
      */
-    public boolean inScreen(int top, int right) {
-        return !(x < 0 || y < 0 || x > right || y > top);
+    public boolean inScreen() {
+        return !(x < 0 || y < 0 || x > GameView.getScreenWidth() || y > GameView.getScreenHeight());
     }
 
 }
