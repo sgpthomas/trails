@@ -51,7 +51,7 @@ public class GameView extends SurfaceView implements Runnable {
     final int playerRadius = 25;
     final int playerHeight = 250;
 
-    float speedPerSecond = 300;
+    float speedPerSecond = 100;
     int score = 0;
     // Progress of matrix
     int matrixPosition = 0;
@@ -234,9 +234,17 @@ public class GameView extends SurfaceView implements Runnable {
         //first, find out which index you have to go to to not count the trail which the plaer just left
         int lastIndex=0;
         for(int i=trail.size()-1; i>=0; i--) {
-            if(!playerRect.contains(trail.get(i).x, trail.get(i).y)) {
-                lastIndex = i;
-                break;
+            if(dir==Direction.DOWN||dir==Direction.STOP_DOWN) {
+                if(trail.get(i).y<playerRect.centerY()-playerRadius) {
+                    lastIndex = i;
+                    break;
+                }
+            }
+            else {
+                if(trail.get(i).y>playerRect.centerY()+playerRadius) {
+                    lastIndex = i;
+                    break;
+                }
             }
         }
         if (!(dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2)) {
