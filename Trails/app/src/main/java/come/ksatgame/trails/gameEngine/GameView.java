@@ -354,15 +354,15 @@ public class GameView extends SurfaceView implements Runnable {
                 Pair start = trail.get(i);
                 Pair stop = trail.get(i+1);
                 if (start.inScreen() || stop.inScreen()) {
-                    paint.setStrokeWidth((int)((double)Math.random()*playerRadius*2));
+//                    paint.setStrokeWidth((int)((double)Math.random()*playerRadius*2));
                     if(start.y > stop.y) {
                         if (collisionValid) paint.setColor(Color.RED);
-                        canvas.drawLine(start.x, start.y + 7, stop.x, stop.y - 7, paint);
-  //                      canvas.drawCircle(start.x, start.y, 10, paint);
+  //                      canvas.drawLine(start.x, start.y + 7, stop.x, stop.y - 7, paint);
+                        canvas.drawCircle(start.x, start.y, (int)((double)Math.random()*playerRadius), paint);
                     } else {
                         if (collisionValid) paint.setColor(Color.GREEN);
-                        canvas.drawLine(start.x, start.y - 7, stop.x, stop.y + 7, paint);
-    //                    canvas.drawCircle(start.x, start.y, 10, paint);
+  //                      canvas.drawLine(start.x, start.y - 7, stop.x, stop.y + 7, paint);
+                        canvas.drawCircle(start.x, start.y, (int)((double)Math.random()*playerRadius), paint);
                     }
                 }
             }
