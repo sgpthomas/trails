@@ -245,17 +245,17 @@ public class GameView extends SurfaceView implements Runnable {
 
         //first, find out which index you have to go to to not count the trail which the plaer just left
         int lastIndex=0;
-        for(int i=trail.size()-1; i>=0; i--) {
+        outer: for(int i=trail.size()-1; i>=0; i--) {
             if(dir==Direction.DOWN||dir==Direction.STOP_DOWN) {
                 if(trail.get(i).y<playerRect.centerY()-playerRadius) {
                     lastIndex = i;
-                    break;
+                    break outer;
                 }
             }
             else {
                 if(trail.get(i).y>playerRect.centerY()+playerRadius) {
                     lastIndex = i;
-                    break;
+                    break outer;
                 }
             }
         }
@@ -343,7 +343,7 @@ public class GameView extends SurfaceView implements Runnable {
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
             // now to draw trail
-            paint.setStrokeWidth(playerRadius*2);
+
             boolean collisionValid = !(dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2);
             if (!collisionValid) paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
@@ -354,14 +354,15 @@ public class GameView extends SurfaceView implements Runnable {
                 Pair start = trail.get(i);
                 Pair stop = trail.get(i+1);
                 if (start.inScreen() || stop.inScreen()) {
+                    paint.setStrokeWidth((int)((double)Math.random()*playerRadius*2));
                     if(start.y > stop.y) {
                         if (collisionValid) paint.setColor(Color.RED);
-//                        canvas.drawLine(start.x, start.y + 7, stop.x, stop.y - 7, paint);
-                        canvas.drawCircle(start.x, start.y, 10, paint);
+                        canvas.drawLine(start.x, start.y + 7, stop.x, stop.y - 7, paint);
+  //                      canvas.drawCircle(start.x, start.y, 10, paint);
                     } else {
                         if (collisionValid) paint.setColor(Color.GREEN);
-//                        canvas.drawLine(start.x, start.y - 7, stop.x, stop.y + 7, paint);
-                        canvas.drawCircle(start.x, start.y, 10, paint);
+                        canvas.drawLine(start.x, start.y - 7, stop.x, stop.y + 7, paint);
+    //                    canvas.drawCircle(start.x, start.y, 10, paint);
                     }
                 }
             }
