@@ -14,6 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.ksatgames.trails.GameOverScreen;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by samthomas on 10/2/16.
@@ -71,6 +72,8 @@ public class GameView extends SurfaceView implements Runnable {
     Direction dir = Direction.UP;
     ArrayList<Pair> trail = new ArrayList<>(0);
     // stores coordinates between which trail is to be drawn
+    boolean collisionValid;
+    //do we want collisions with trail to be possible at this point?
 
     public GameView(Context context, int numBlocks, float speedPerSecond) {
 
@@ -224,7 +227,9 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
-
+        collisionValid = !((dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-
+                (playerHeight+playerRadius)*2)
+                ||(playerRect.centerY()>(screenHeight-playerHeight)&& dir==Direction.STOP_UP));
         // collision handling
         if (playerRect.centerY() > (playerRadius+3)) {
             // so that the player doesn't collide with an unseen rectangle at the top of the screen
@@ -336,34 +341,34 @@ public class GameView extends SurfaceView implements Runnable {
 
             // player draw logic
             playerRect.set(getRect((int) playerX - playerRadius,
-                    (dir == Direction.DOWN ? playerHeight+playerRadius : screenHeight-playerHeight-playerRadius-
+                    (dir == Direction.DOWN ? playerHeight + playerRadius : screenHeight - playerHeight - playerRadius -
                             ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
-                    2*playerRadius, 2*playerRadius));
+                    2 * playerRadius, 2 * playerRadius));
             // adding current player location to list of trail coordinates
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
             // now to draw trail
 
-            boolean collisionValid = !(dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2);
+
             if (!collisionValid) paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
             // this could be optimized later by changing condition so that iteration stops at first out of screen
             // or one could try and use Path class
-            for (int i = 0; i < trail.size()-1; i++) {
+            for (int i = 0; i < trail.size() - 1; i++) {
                 Pair start = trail.get(i);
-                Pair stop = trail.get(i+1);
-                if (start.inScreen() || stop.inScreen()) {
+                if (start.inScreen()) {
 //                    paint.setStrokeWidth((int)((double)Math.random()*playerRadius*2));
-                    if(start.y > stop.y) {
-                        if (collisionValid) paint.setColor(Color.RED);
-  //                      canvas.drawLine(start.x, start.y + 7, stop.x, stop.y - 7, paint);
-                        canvas.drawCircle(start.x, start.y, (int)((double)Math.random()*playerRadius), paint);
-                    } else {
-                        if (collisionValid) paint.setColor(Color.GREEN);
-  //                      canvas.drawLine(start.x, start.y - 7, stop.x, stop.y + 7, paint);
-                        canvas.drawCircle(start.x, start.y, (int)((double)Math.random()*playerRadius), paint);
+                    Random rand = new Random();
+                    //so that we never get white
+                    if (collisionValid) {
+                        int r = rand.nextInt(220);
+                        int g = rand.nextInt(220);
+                        int b = rand.nextInt(220);
+                        int randomColor = Color.rgb(r, g, b);
+                        paint.setColor(randomColor);
                     }
+                    canvas.drawCircle(start.x, start.y, (int) ((double) Math.random() * playerRadius), paint);
                 }
             }
 //            float t[]=new float[trail.size()];
@@ -378,7 +383,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
 
-            paint.setColor(Color.argb(255, 250, 100, 200));   //something that stands out against white and black
+            paint.setColor(Color.argb(255, 0, 255, 100));   //something that stands out against white and black
             // print score
             paint.setTextSize(70);
             canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
