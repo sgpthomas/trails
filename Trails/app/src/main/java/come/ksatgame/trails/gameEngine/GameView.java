@@ -440,6 +440,7 @@ public class GameView extends SurfaceView implements Runnable {
     }
     else {
         Intent intent = new Intent(this.context, GameOverScreen.class);
+            intent.putExtra("TOT_SCORE", totScore+score);
         this.context.startActivity(intent);
     }
     }

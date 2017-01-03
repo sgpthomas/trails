@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class GameOverScreen extends AppCompatActivity {
 
@@ -13,6 +14,9 @@ public class GameOverScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over_screen);
+        int score = getIntent().getIntExtra("TOT_SCORE", 0);
+        TextView scoreText = (TextView)findViewById(R.id.score_text);
+        scoreText.setText("Total Score : "+score);
     }
 
     public void playAgain(View view) {
