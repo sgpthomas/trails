@@ -2,6 +2,7 @@ package com.ksatgames.trails;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +26,6 @@ public class MainActivity extends Activity {
         // Initialize gameView and set it as the view
         gameView = new GameView(this, 2, 400);
         setContentView(gameView);
-
     }
     // This method executes when the player starts the game
     @Override

@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.ksatgames.trails.GameOverScreen;
+import com.ksatgames.trails.LevelClearedScreen;
 import com.ksatgames.trails.R;
 
 import java.util.ArrayList;
@@ -324,7 +325,6 @@ public class GameView extends SurfaceView implements Runnable {
                     playerRect.right+(int)(speedPerSecond/fps), playerRect.bottom+(int)(speedPerSecond/fps));
             int lastIndex=0;
             for(int i=trail.size()-1; i>0; i--) {
-//                    if(trail.get(i).y<playerRect.centerY()-playerRadius*2) {
                       if(!bigRect.contains(trail.get(i).x, trail.get(i).y))  {
                         lastIndex = i;
                         break;
@@ -351,7 +351,7 @@ public class GameView extends SurfaceView implements Runnable {
                     //check for collision
                     if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
                         if(Rect.intersects(playerRect, new Rect(start.x-(int)(rad*0.5), start.y-(int)(rad*0.5),
-                                start.x+(int)(rad*0.5), start.y+(int)(rad*0.5)))) {
+                                start.x+(int)(rad), start.y+(int)(rad)))) {
                             endGame();
                         }
                     }
@@ -423,8 +423,17 @@ public class GameView extends SurfaceView implements Runnable {
 
     // ends game and goes to the GameOver Screen
     public void endGame() {
+        //10 from the empty rows+3 from the "padding"=13 not-counted rows
+        //You clear the level if you've completed a loop, that is to say, bounced off the bottom of the screen
+        if(score>= (200+ 2*(matrix.length-13))) {
+        Intent intent = new Intent(this.context, LevelClearedScreen.class);
+            intent.putExtra("SCORE", score);
+        this.context.startActivity(intent);
+    }
+    else {
         Intent intent = new Intent(this.context, GameOverScreen.class);
         this.context.startActivity(intent);
+    }
     }
 
     // The SurfaceView class implements onTouchListener

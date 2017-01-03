@@ -10,17 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ksatgames.trails.LevelClearedScreen">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/next_level_button"
-        android:onClick="playAgain (LevelClearedScreen)"
-        android:layout_marginBottom="113dp"
-        android:id="@+id/nextLevelButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <!--The text: score for this textview will be set by the java class-->
     <TextView
         android:text="Score:"
@@ -42,5 +31,16 @@
         android:text="@string/level_cleared_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/next_level_button"
+        android:onClick="levelCleared"
+        android:layout_marginBottom="113dp"
+        android:id="@+id/nextLevelButton"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
