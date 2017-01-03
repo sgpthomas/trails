@@ -13,8 +13,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import com.ksatgames.trails.GameOverScreen;
+import com.ksatgames.trails.R;
+
 import java.util.ArrayList;
 import java.util.Random;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 /**
  * Created by samthomas on 10/2/16.
@@ -35,6 +39,7 @@ public class GameView extends SurfaceView implements Runnable {
     // A boolean which we will set and unset
     // when the game is running- or not.
     volatile boolean playing;
+    volatile boolean gamePaused;
 
     // A Canvas and a Paint object
     Canvas canvas;
@@ -68,12 +73,23 @@ public class GameView extends SurfaceView implements Runnable {
     int blockSize;
     // int dir = 1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
-    enum Direction { UP, DOWN, STOP_UP, STOP_DOWN; }
+    enum Direction { UP, DOWN, STOP_UP, STOP_DOWN
+    }
     Direction dir = Direction.UP;
     ArrayList<Pair> trail = new ArrayList<>(0);
     // stores coordinates between which trail is to be drawn
     boolean collisionValid;
     //do we want collisions with trail to be possible at this point?
+
+    Rect pause=new Rect(0,0, (int)(screenWidth*0.2), (int)(screenWidth*0.2));
+    Bitmap pauseBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause);
+
+    Rect play=new Rect((int)(screenWidth*0.4),(int)(screenHeight*0.7), (int)(screenWidth*0.6),
+            (int)(screenHeight*0.7 + screenWidth*0.2));
+    Bitmap playBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play);
+
+//    Rect restart=new Rect((int)(screenWidth*0.5),(int)(screenHeight*0.7), (int)(screenWidth*0.6), (int)(screenHeight*0.8));
+//    Bitmap restartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.restart);
 
     public GameView(Context context, int numBlocks, float speedPerSecond) {
 
@@ -111,6 +127,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         // Set our boolean to true - game on!
         playing = true;
+        gamePaused=false;
     }
 
     public static int getScreenHeight() {
@@ -303,21 +320,15 @@ public class GameView extends SurfaceView implements Runnable {
             // adding current player location to list of trail coordinates
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
-            Rect BigRect=new Rect(playerRect.left-(int)(speedPerSecond/fps), playerRect.top-(int)(speedPerSecond/fps), playerRect.right+(int)(speedPerSecond/fps), playerRect.bottom+(int)(speedPerSecond/fps));
+            Rect bigRect=new Rect(playerRect.left-(int)(speedPerSecond/fps), playerRect.top-(int)(speedPerSecond/fps),
+                    playerRect.right+(int)(speedPerSecond/fps), playerRect.bottom+(int)(speedPerSecond/fps));
             int lastIndex=0;
             for(int i=trail.size()-1; i>0; i--) {
-                if(dir==Direction.DOWN||dir==Direction.STOP_DOWN) {
-                    if(trail.get(i).y<playerRect.centerY()-playerRadius) {
+//                    if(trail.get(i).y<playerRect.centerY()-playerRadius*2) {
+                      if(!bigRect.contains(trail.get(i).x, trail.get(i).y))  {
                         lastIndex = i;
                         break;
                     }
-                }
-                else {
-                    if(trail.get(i).y>playerRect.centerY()+playerRadius) {
-                        lastIndex = i;
-                        break;
-                    }
-                }
             }
             // now to draw trail
             if (!collisionValid) paint.setColor(Color.BLUE);
@@ -335,10 +346,10 @@ public class GameView extends SurfaceView implements Runnable {
                         int randomColor = Color.rgb(r, g, b);
                         paint.setColor(randomColor);
                     }
-                    int rad=(int) ((double) Math.random() * playerRadius);
+                    int rad=(int) (Math.random() * playerRadius);
                     canvas.drawCircle(start.x, start.y, rad, paint);
                     //check for collision
-                    if(i<lastIndex && BigRect.contains(start.x, start.y) && collisionValid){
+                    if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
                         if(Rect.intersects(playerRect, new Rect(start.x-(int)(rad*0.5), start.y-(int)(rad*0.5),
                                 start.x+(int)(rad*0.5), start.y+(int)(rad*0.5)))) {
                             endGame();
@@ -357,14 +368,38 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setTextSize(70);
             canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
 
+            //pause button
+            canvas.drawBitmap(pauseBitmap, null, pause, paint);
+
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
 
-    private Rect getRect(int x, int y, int width, int height) {
-        return new Rect(x, y, x + width, y + height);
+    public void drawPause() {
+        // Make sure our drawing surface is valid or we crash
+        if (ourHolder.getSurface().isValid()) {
+            // Lock the canvas ready to draw
+            canvas = ourHolder.lockCanvas();
+
+            // Draw the background color
+            canvas.drawColor(Color.argb(100, 255, 255, 255));
+            //translucent white
+
+            //buttons
+            canvas.drawBitmap(playBitmap, null, play, paint);
+//            canvas.drawBitmap(restartBitmap, null, restart, paint);
+
+            // Draw everything to the screen
+            ourHolder.unlockCanvasAndPost(canvas);
+        }
     }
+
+
+        private Rect getRect(int x, int y, int width, int height) {
+        return new Rect(x, y, x + width, y + height);
+        }
+
 
     // If SimpleGameEngine Activity is paused/stopped
     // shutdown our thread.
@@ -375,13 +410,13 @@ public class GameView extends SurfaceView implements Runnable {
         } catch (InterruptedException e) {
             Log.e("Error:", "joining thread");
         }
-
     }
 
     // If SimpleGameEngine Activity is started then
     // start our thread.
     public void resume() {
         playing = true;
+        gamePaused=false;
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -401,9 +436,23 @@ public class GameView extends SurfaceView implements Runnable {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 playerNewX = motionEvent.getX();
-                playerDeltaX = playerNewX - playerX;
-
-                break;
+                float y=motionEvent.getY();
+                if(!gamePaused) {
+                    if (pause.contains((int) playerNewX, (int) y)) {
+                        pause();
+                        gamePaused = true;
+                        drawPause();
+                    }
+                    else {
+                        playerDeltaX = playerNewX - playerX;
+                    }
+                    break;
+                }
+                else{
+                    if (play.contains((int) playerNewX, (int) y))   {
+                        resume();
+                    }
+                }
         }
         return true;
     }

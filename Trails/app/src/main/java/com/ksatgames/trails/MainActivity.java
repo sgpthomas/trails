@@ -41,11 +41,12 @@ public class MainActivity extends Activity {
         // Tell the gameView pause method to execute
         gameView.pause();
     }
+
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Closing Activity")
+                .setTitle("End game")
                 .setMessage("Are you sure you want to quit this game?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
