@@ -26,7 +26,10 @@ public class MainActivity extends Activity {
         totScore = getIntent().getIntExtra("TOT_SCORE", 0);
         level = getIntent().getIntExtra("LEVEL", 1);
         // Initialize gameView and set it as the view
-        gameView = new GameView(this, 2, 400, level, totScore);
+        //number of screenlrngths long the maze is
+        int numBlocks=2+level;
+        int speedPerSec=300+20*level;
+        gameView = new GameView(this, numBlocks, speedPerSec, level, totScore);
         setContentView(gameView);
     }
     // This method executes when the player starts the game

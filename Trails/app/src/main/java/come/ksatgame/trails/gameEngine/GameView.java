@@ -116,8 +116,8 @@ public class GameView extends SurfaceView implements Runnable {
         // set player speed
         this.speedPerSecond = speedPerSecond;
 
+        int cols=4+(int)(level/3);
         // get matrix
-        int cols = 5;
         blockSize = screenWidth / cols;
 
         matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*numBlocks, cols, 2);
