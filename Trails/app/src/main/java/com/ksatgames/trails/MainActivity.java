@@ -18,13 +18,15 @@ public class MainActivity extends Activity {
     // It will also hold the logic of the game
     // and respond to screen touches as well
     GameView gameView;
-
+    int totScore;
+    int level;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        totScore = getIntent().getIntExtra("TOT_SCORE", 0);
+        level = getIntent().getIntExtra("LEVEL", 1);
         // Initialize gameView and set it as the view
-        gameView = new GameView(this, 2, 400);
+        gameView = new GameView(this, 2, 400, level, totScore);
         setContentView(gameView);
     }
     // This method executes when the player starts the game

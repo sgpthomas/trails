@@ -92,7 +92,10 @@ public class GameView extends SurfaceView implements Runnable {
 //    Rect restart=new Rect((int)(screenWidth*0.5),(int)(screenHeight*0.7), (int)(screenWidth*0.6), (int)(screenHeight*0.8));
 //    Bitmap restartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.restart);
 
-    public GameView(Context context, int numBlocks, float speedPerSecond) {
+    int totScore;
+    int level;
+
+    public GameView(Context context, int numBlocks, float speedPerSecond, int level, int totScore) {
 
         // initialize our object
         super(context);
@@ -125,6 +128,9 @@ public class GameView extends SurfaceView implements Runnable {
                 submatrix[i][j] = matrix[matrix.length-(screenHeight/blockSize)-4+i][j];
             }
         }
+
+        this.level=level;
+        this.totScore=totScore;
 
         // Set our boolean to true - game on!
         playing = true;
@@ -428,6 +434,8 @@ public class GameView extends SurfaceView implements Runnable {
         if(score>= (200+ 2*(matrix.length-13))) {
         Intent intent = new Intent(this.context, LevelClearedScreen.class);
             intent.putExtra("SCORE", score);
+            intent.putExtra("LEVEL", level);
+            intent.putExtra("TOT_SCORE", totScore);
         this.context.startActivity(intent);
     }
     else {

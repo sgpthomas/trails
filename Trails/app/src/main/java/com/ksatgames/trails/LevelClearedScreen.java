@@ -15,17 +15,32 @@ import android.widget.TextView;
 public class LevelClearedScreen extends AppCompatActivity {
 
     int score;
+    int totScore;
+    int level;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             score = getIntent().getIntExtra("SCORE", 0);
+            totScore = getIntent().getIntExtra("TOT_SCORE", 0);
+            level = getIntent().getIntExtra("LEVEL", 0);
             setContentView(R.layout.activity_level_cleared);
             TextView scoreText = (TextView)findViewById(R.id.score_text);
             scoreText.setText("Score : "+score);
+
+            TextView levelCleared= (TextView)findViewById(R.id.level_cleared_text);
+            levelCleared.setText("Level "+level+" Cleared!");
+
+            totScore=totScore+score;
+            TextView totalScore= (TextView)findViewById(R.id.tot_score);
+            totalScore.setText("Total Score : "+totScore);
+
+            level++;
         }
 
         public void levelCleared(View view) {
             Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("LEVEL", level);
+            intent.putExtra("TOT_SCORE", totScore);
             startActivity(intent);
         }
 
