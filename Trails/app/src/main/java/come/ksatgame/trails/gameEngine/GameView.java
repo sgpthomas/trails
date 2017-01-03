@@ -232,68 +232,23 @@ public class GameView extends SurfaceView implements Runnable {
                 ||(playerRect.centerY()>(screenHeight-playerHeight)&& dir==Direction.STOP_UP));
         // collision handling
         if (playerRect.centerY() > (playerRadius+3)) {
-            // so that the player doesn't collide with an unseen rectangle at the top of the screen
+            // +3 so that the player doesn't collide with an unseen rectangle at the top of the screen
             for (int y = 0; y < submatrix.length; y++) {
-                for (int x = 0; x < submatrix[y].length; x++) {
-                    if (submatrix[y][x] == 1) {
-                        Rect subRect = getRect(x * blockSize, (y - 2) * blockSize +
-                                ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0), blockSize, blockSize);
-                        if (Rect.intersects(playerRect, subRect)) {
-                            endGame();
-                        }
-                    }
-                }
-            }
-        }
-
-        // check intersection with trail
-
-        //first, find out which index you have to go to to not count the trail which the plaer just left
-        int lastIndex=0;
-        outer: for(int i=trail.size()-1; i>=0; i--) {
-            if(dir==Direction.DOWN||dir==Direction.STOP_DOWN) {
-                if(trail.get(i).y<playerRect.centerY()-playerRadius) {
-                    lastIndex = i;
-                    break outer;
-                }
-            }
-            else {
-                if(trail.get(i).y>playerRect.centerY()+playerRadius) {
-                    lastIndex = i;
-                    break outer;
-                }
-            }
-        }
-        if (!(dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-(playerHeight+playerRadius)*2)) {
-            boolean flag = false; // has intersection occured?
-            // consider optimization by deciding which variables to store as local and which to just call playerRect for each time
-            outer: for (int i = 0; i < lastIndex; i++) {
-                int y1 = trail.get(i).y;
-                int y2 = trail.get(i + 1).y;
-                // if the segment is in the same vertical region as the player
-                if (y2 < y1 && (playerRect.contains(playerRect.centerX(), y1)
-                        || playerRect.contains(playerRect.centerX(), y1)
-                        || (y1 > playerRect.centerY() && y2 < playerRect.centerY()))) {
-                    int x1 = trail.get(i).x;
-                    int x2 = trail.get(i + 1).x;
-                    if (x1 == x2) {
-                        flag = playerRect.contains(x1, playerRect.centerY());
-                    } else {
-                        float slope = ((float) (y2 - y1)) / (x2 - x1);
-                        for (int j = y2; j < y1; j++) {
-                            int x = x1 + (int) ((j - y2)/slope);
-                            if (playerRect.contains(x, j)) {
-                                // might need to test points around this region for slower systems
-                                flag = true;
-                                break outer;
+                int top=(y - 2) * blockSize + ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0);
+                if((top<playerRect.centerY() && playerRect.centerY()<top+blockSize) ||
+                        playerRect.contains(playerRect.centerX(),top) ||
+                        playerRect.contains(playerRect.centerX(),top+blockSize)) {
+                    for (int x = 0; x < submatrix[y].length; x++) {
+                        if (submatrix[y][x] == 1) {
+                            Rect subRect = getRect(x * blockSize, (y - 2) * blockSize +
+                                            ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0)
+                                    , blockSize, blockSize);
+                            if (Rect.intersects(playerRect, subRect)) {
+                                endGame();
                             }
                         }
                     }
                 }
-            }
-
-            if (flag) {
-                endGame();
             }
         }
 
@@ -333,8 +288,9 @@ public class GameView extends SurfaceView implements Runnable {
             for (int y = 0; y < submatrix.length; y++) {
                 for (int x = 0; x < submatrix[y].length; x++) {
                     if (submatrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x * blockSize, (y - 2) * blockSize + ((dir == Direction.UP || dir == Direction.DOWN)
-                                ? matrixPosition : 0), blockSize, blockSize), paint);
+                        canvas.drawRect(getRect(x * blockSize, (y - 2) * blockSize +
+                                ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0),
+                                blockSize, blockSize), paint);
                     }
                 }
             }
@@ -347,36 +303,49 @@ public class GameView extends SurfaceView implements Runnable {
             // adding current player location to list of trail coordinates
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
+            Rect BigRect=new Rect(playerRect.left-(int)(speedPerSecond/fps), playerRect.top-(int)(speedPerSecond/fps), playerRect.right+(int)(speedPerSecond/fps), playerRect.bottom+(int)(speedPerSecond/fps));
+            int lastIndex=0;
+            for(int i=trail.size()-1; i>0; i--) {
+                if(dir==Direction.DOWN||dir==Direction.STOP_DOWN) {
+                    if(trail.get(i).y<playerRect.centerY()-playerRadius) {
+                        lastIndex = i;
+                        break;
+                    }
+                }
+                else {
+                    if(trail.get(i).y>playerRect.centerY()+playerRadius) {
+                        lastIndex = i;
+                        break;
+                    }
+                }
+            }
             // now to draw trail
-
-
             if (!collisionValid) paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
-            // this could be optimized later by changing condition so that iteration stops at first out of screen
-            // or one could try and use Path class
             for (int i = 0; i < trail.size() - 1; i++) {
                 Pair start = trail.get(i);
                 if (start.inScreen()) {
-//                    paint.setStrokeWidth((int)((double)Math.random()*playerRadius*2));
                     Random rand = new Random();
                     //so that we never get white
                     if (collisionValid) {
-                        int r = rand.nextInt(220);
-                        int g = rand.nextInt(220);
-                        int b = rand.nextInt(220);
+                        int r = rand.nextInt(240);
+                        int g = rand.nextInt(250);
+                        int b = rand.nextInt(250);
                         int randomColor = Color.rgb(r, g, b);
                         paint.setColor(randomColor);
                     }
-                    canvas.drawCircle(start.x, start.y, (int) ((double) Math.random() * playerRadius), paint);
+                    int rad=(int) ((double) Math.random() * playerRadius);
+                    canvas.drawCircle(start.x, start.y, rad, paint);
+                    //check for collision
+                    if(i<lastIndex && BigRect.contains(start.x, start.y) && collisionValid){
+                        if(Rect.intersects(playerRect, new Rect(start.x-(int)(rad*0.5), start.y-(int)(rad*0.5),
+                                start.x+(int)(rad*0.5), start.y+(int)(rad*0.5)))) {
+                            endGame();
+                        }
+                    }
                 }
             }
-//            float t[]=new float[trail.size()];
-//            for(int i=0; i<trail.size();i++){
-//                t[i]=trail.get(i).y;
-//            }
-//            canvas.drawLines(t,0,2, paint);
-
             // drawing player
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
