@@ -26,9 +26,9 @@ public class MainActivity extends Activity {
         totScore = getIntent().getIntExtra("TOT_SCORE", 0);
         level = getIntent().getIntExtra("LEVEL", 1);
         // Initialize gameView and set it as the view
-        //number of screenlrngths long the maze is
+        //number of screenlengths long the maze is
         int numBlocks=2+level;
-        int speedPerSec=300+20*level;
+        int speedPerSec=250+20*level;
         gameView = new GameView(this, numBlocks, speedPerSec, level, totScore);
         setContentView(gameView);
     }
@@ -49,6 +49,8 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        gameView.pause();
+        gameView.drawPause();
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("End game")

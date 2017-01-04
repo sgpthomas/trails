@@ -410,6 +410,7 @@ public class GameView extends SurfaceView implements Runnable {
     // If SimpleGameEngine Activity is paused/stopped
     // shutdown our thread.
     public void pause() {
+        gamePaused=true;
         playing = false;
         try {
             gameThread.join();
