@@ -171,6 +171,8 @@ public class GameView extends SurfaceView implements Runnable {
             // Update the frame
             update();
 
+            //check condition to prevent canvas null pointer
+            if(playing) {
             // Draw the frame
             draw();
 
@@ -179,6 +181,7 @@ public class GameView extends SurfaceView implements Runnable {
             long timeThisFrame = System.currentTimeMillis() - startFrameTime;
             if (timeThisFrame > 0) {
                 fps = 1000 / timeThisFrame;
+            }
             }
         }
     }
