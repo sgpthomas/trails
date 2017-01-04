@@ -82,12 +82,11 @@ public class GameView extends SurfaceView implements Runnable {
     boolean collisionValid;
     //do we want collisions with trail to be possible at this point?
 
-    Rect pause=new Rect(0,0, (int)(screenWidth*0.2), (int)(screenWidth*0.2));
-    Bitmap pauseBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause);
+    Rect pause;
+    Bitmap pauseBitmap;
 
-    Rect play=new Rect((int)(screenWidth*0.4),(int)(screenHeight*0.7), (int)(screenWidth*0.6),
-            (int)(screenHeight*0.7 + screenWidth*0.2));
-    Bitmap playBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play);
+    Rect play;
+    Bitmap playBitmap;
 
 //    Rect restart=new Rect((int)(screenWidth*0.5),(int)(screenHeight*0.7), (int)(screenWidth*0.6), (int)(screenHeight*0.8));
 //    Bitmap restartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.restart);
@@ -131,6 +130,13 @@ public class GameView extends SurfaceView implements Runnable {
 
         this.level=level;
         this.totScore=totScore;
+
+        pause=new Rect(0,0, (int)(screenWidth*0.2), (int)(screenWidth*0.2));
+        pauseBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause);
+
+        play=new Rect((int)(screenWidth*0.4),(int)(screenHeight*0.7), (int)(screenWidth*0.6),
+                (int)(screenHeight*0.7 + screenWidth*0.2));
+        playBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play);
 
         // Set our boolean to true - game on!
         playing = true;
