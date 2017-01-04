@@ -27,8 +27,8 @@ public class MainActivity extends Activity {
         level = getIntent().getIntExtra("LEVEL", 1);
         // Initialize gameView and set it as the view
         //number of screenlengths long the maze is
-        int numBlocks=2+level;
-        int speedPerSec=250+20*level;
+        int numBlocks=2+level/2;
+        int speedPerSec=220+20*level;
         gameView = new GameView(this, numBlocks, speedPerSec, level, totScore);
         setContentView(gameView);
     }
@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("End game")
-                .setMessage("Are you sure you want to quit this game?")
+                .setMessage("Are you sure you want to end this game?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
                     @Override

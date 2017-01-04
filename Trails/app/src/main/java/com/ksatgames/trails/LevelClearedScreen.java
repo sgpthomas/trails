@@ -48,8 +48,8 @@ public class LevelClearedScreen extends AppCompatActivity {
     public void onBackPressed() {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Closing Activity")
-                .setMessage("Are you sure you want to exit Trails?")
+                .setTitle("Exit")
+                .setMessage("Are you sure you want to exit Trails? All progress will be lost.")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener()
                 {
                     @Override

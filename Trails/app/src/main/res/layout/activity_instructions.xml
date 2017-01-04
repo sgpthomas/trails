@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textSize="40dp"
+        android:text="Instructions..." />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/textView"
+        android:textSize="20dp"
+        android:id="@+id/instructions"
+        android:text="The aim of this game is to go travel as long as you can without colliding with your own trail- or the black barriers.
+        Control the blue dot by tapping or swiping left and right. Once you reacha certain distance, you'll bounce off the tp of the creen and start backwards. You have a small grace period when you bounce off the ends of the maze. At this time, your trail turns blue and it's ok if you go over it.
+        You clear a level if you successfully complete at least one round (back and forth) before you crash." />
+
+    <Button
+        android:text="Back to start screen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:onClick="start"
+        android:id="@+id/start" />
+    </LinearLayout>
+</ScrollView>
+
+

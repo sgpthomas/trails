@@ -9,29 +9,31 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:textSize="40dp"
-        android:text="@string/title" />
+        android:text="Level Selection..." />
 
-    <Button
+    <TextView
+        android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/textView"
-        android:hint="@string/start_button"
+        android:id="@+id/enter_level_text"
+        android:text="Enter level:" />
+
+    <EditText
+        android:textSize="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/enter_level_text"
+        android:id="@+id/level"
+        android:text="" />
+
+    <Button
+        android:text="Start Game"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:onClick="play"
-        android:id="@+id/button"
-        android:text="@string/start_button" />
+        android:id="@+id/play_button" />
 
-    <Button
-        android:text="Level selection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="selectLevel"
-        android:id="@+id/level_selection_button" />
-
-    <Button
-        android:text="Instructions to Play"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="instructions"
-        android:id="@+id/instructions_button" />
 </LinearLayout>

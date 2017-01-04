@@ -18,4 +18,13 @@ public class Start extends AppCompatActivity {
             startActivity(intent);
         }
 
+        public void selectLevel(View view)  {
+            Intent intent = new Intent(this, LevelSelectionScreen.class);
+            startActivity(intent);
+        }
+
+        public void instructions(View view) {
+            Intent intent = new Intent(this, InstructionsScreen.class);
+            startActivity(intent);
+        }
 }

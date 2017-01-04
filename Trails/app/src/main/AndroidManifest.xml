@@ -26,5 +26,11 @@
         <activity android:name=".LevelClearedScreen"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".LevelSelectionScreen"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".InstructionsScreen"
+        android:screenOrientation="portrait">
+    </activity>
     </application>
 </manifest>

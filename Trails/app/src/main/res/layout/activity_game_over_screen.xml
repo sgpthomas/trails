@@ -28,6 +28,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="188dp"
+        android:text="Play Again"
         />
 
     <TextView
@@ -42,5 +43,16 @@
         android:textSize="30dp"
         android:layout_alignRight="@+id/game_over_text"
         android:layout_alignEnd="@+id/game_over_text" />
+
+    <Button
+        android:text="Level Selection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/game_over_level_selection"
+        android:layout_alignTop="@+id/button2"
+        android:layout_marginTop="44dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="levelSelection"/>
 
 </RelativeLayout>

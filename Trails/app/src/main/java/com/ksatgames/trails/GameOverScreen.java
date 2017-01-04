@@ -23,6 +23,12 @@ public class GameOverScreen extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+    public void levelSelection(View view) {
+        Intent intent = new Intent(this, LevelSelectionScreen.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
