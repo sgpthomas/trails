@@ -88,6 +88,9 @@ public class GameView extends SurfaceView implements Runnable {
     Rect play;
     Bitmap playBitmap;
 
+    //number of rows to be left blank
+    boolean gameWon;
+
 //    Rect restart=new Rect((int)(screenWidth*0.5),(int)(screenHeight*0.7), (int)(screenWidth*0.6), (int)(screenHeight*0.8));
 //    Bitmap restartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.restart);
 
@@ -119,7 +122,7 @@ public class GameView extends SurfaceView implements Runnable {
         // get matrix
         blockSize = screenWidth / cols;
 
-        matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*numBlocks, cols, (cols/2)-1);
+        matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*numBlocks, cols, (cols/2)-1, screenHeight/(blockSize));
 
         submatrix=new int[screenHeight/blockSize+3][cols];
         for(int i=0; i<submatrix.length; i++) {
@@ -139,6 +142,7 @@ public class GameView extends SurfaceView implements Runnable {
         playBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play);
 
         // Set our boolean to true - game on!
+        gameWon=false;
         playing = true;
         gamePaused=false;
     }
@@ -227,6 +231,7 @@ public class GameView extends SurfaceView implements Runnable {
         // bouncing off the bottom of the screen
         else if (dir == Direction.STOP_DOWN && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
             // the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
+            gameWon=true;
             dir = Direction.STOP_UP;
             passed = 0;
             score += 100;
@@ -333,11 +338,11 @@ public class GameView extends SurfaceView implements Runnable {
             // adding current player location to list of trail coordinates
             trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
 
-            Rect bigRect=new Rect(playerRect.left-(int)(speedPerSecond/fps), playerRect.top-(int)(speedPerSecond/fps),
-                    playerRect.right+(int)(speedPerSecond/fps), playerRect.bottom+(int)(speedPerSecond/fps));
+            Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
+                    playerRect.right+playerRadius, playerRect.bottom+playerRadius);
             int lastIndex=0;
             for(int i=trail.size()-1; i>0; i--) {
-                      if(!bigRect.contains(trail.get(i).x, trail.get(i).y))  {
+                      if(!bigRect.contains(bigRect.centerX(), trail.get(i).y))  {
                         lastIndex = i;
                         break;
                     }
@@ -436,9 +441,10 @@ public class GameView extends SurfaceView implements Runnable {
 
     // ends game and goes to the GameOver Screen
     public void endGame() {
-        //10 from the empty rows+3 from the "padding"=13 not-counted rows
+        playing=false;
+        //blankRows from the empty rows+3 from the "padding"+onScreen rows= not-counted rows
         //You clear the level if you've completed a loop, that is to say, bounced off the bottom of the screen
-        if(score>= (200+ 2*(matrix.length-13))) {
+        if(gameWon) {
         Intent intent = new Intent(this.context, LevelClearedScreen.class);
             intent.putExtra("SCORE", score);
             intent.putExtra("LEVEL", level);

@@ -16,7 +16,7 @@ public class Generator {
 
 
     // generated original matrix; to be called before start of game
-    public int[][] genMatrix(int l, int w, int max) {
+    public int[][] genMatrix(int l, int w, int max, int blankRows) {
         int track = (int) (Math.random()*w); // keeps track of the usable track
         int matrix[][] = new int[l][w]; // this is what we are generating
 
@@ -27,8 +27,8 @@ public class Generator {
             for (int j = 0; j < w; j++) {
                 matrix[i][j] = 0;
             }
-            //first 10 rows to be left blank
-            if (i < l - 10) {
+
+            if (i < l - blankRows) {
                 // loop through the cols and choose max 1s
                 for (int j = 0; j < max; ) {
                     int x = (int) (Math.random() * w);
