@@ -13,7 +13,7 @@ import java.util.Random;
  * y controls heightwise position
  * Created by aditi on 12/18/16.
  */
-public class TrailPoint {
+public class TrailPoint implements Renderable {
 
     public int x;
     public int y;
@@ -51,9 +51,10 @@ public class TrailPoint {
         y = y + offset;
     }
 
-    public void draw(Canvas canvas, Paint paint, boolean collisionValid) {
+    @Override
+    public void draw(Canvas canvas, Paint paint) {
         if (inScreen()) {
-            if (collisionValid) {
+            if (GameView.collisionValid) {
                 paint.setColor(color);
             }
             if (counter > 20) {

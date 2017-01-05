@@ -79,7 +79,7 @@ public class GameView extends SurfaceView implements Runnable {
     Direction dir = Direction.UP;
     ArrayList<TrailPoint> trail = new ArrayList<>(0);
     // stores coordinates between which trail is to be drawn
-    boolean collisionValid;
+    public static boolean collisionValid;
     //do we want collisions with trail to be possible at this point?
 
     Rect pause;
