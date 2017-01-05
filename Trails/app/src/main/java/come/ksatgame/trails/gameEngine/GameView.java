@@ -266,6 +266,7 @@ public class GameView extends SurfaceView implements Runnable {
                 ||(playerRect.centerY()>(screenHeight-playerHeight)&& dir==Direction.STOP_UP));
 
         // collision handling
+        //for tiles
         if (playerRect.centerY() > (playerRadius+3)) {
             // +3 so that the player doesn't collide with an unseen rectangle at the top of the screen
             for (int y = 0; y < submatrix.length; y++) {
@@ -283,6 +284,25 @@ public class GameView extends SurfaceView implements Runnable {
                             }
                         }
                     }
+                }
+            }
+        }
+        //collision handling for trail
+        Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
+                playerRect.right+playerRadius, playerRect.bottom+playerRadius);
+        int lastIndex=0;
+        for(int i=trail.size()-1; i>0; i--) {
+            if(!bigRect.contains(bigRect.centerX(), trail.get(i).y))  {
+                lastIndex = i;
+                break;
+            }
+        }
+        for(int i=0; i<trail.size()-1; i++) {
+            TrailPoint start=trail.get(i);
+            if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
+                if(Rect.intersects(playerRect, new Rect(start.x-(int)(start.radius*0.5), start.y-(int)(start.radius*0.5),
+                        start.x+(start.radius), start.y+(start.radius)))) {
+                    endGame();
                 }
             }
         }
@@ -343,15 +363,6 @@ public class GameView extends SurfaceView implements Runnable {
                 trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY(), trail.size()));
             }
 
-            Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
-                    playerRect.right+playerRadius, playerRect.bottom+playerRadius);
-            int lastIndex=0;
-            for(int i=trail.size()-1; i>0; i--) {
-                      if(!bigRect.contains(bigRect.centerX(), trail.get(i).y))  {
-                        lastIndex = i;
-                        break;
-                    }
-            }
             // now to draw trail
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
@@ -360,13 +371,6 @@ public class GameView extends SurfaceView implements Runnable {
                 TrailPoint start = trail.get(i);
                 start.draw(canvas, paint);
 
-                // check for collision
-                if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
-                    if(Rect.intersects(playerRect, new Rect(start.x-(int)(start.radius*0.5), start.y-(int)(start.radius*0.5),
-                            start.x+(start.radius), start.y+(start.radius)))) {
-                        endGame();
-                    }
-                }
             }
 
             // drawing player
