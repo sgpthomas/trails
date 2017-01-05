@@ -29,8 +29,20 @@ public class MainActivity extends Activity {
         endless=getIntent().getBooleanExtra("ENDLESS", false);
         // Initialize gameView and set it as the view
         //number of screenlengths long the maze is
-        int numBlocks=2+level/2;
-        int speedPerSec=220+20*level;
+        int numBlocks=2;
+        if(level<5) {
+            numBlocks+=level;
+        }
+        else    {
+            numBlocks+=2+level/2;
+        }
+        int speedPerSec;
+        if(level<5) {
+            speedPerSec = 200 + 40*level;
+        }
+        else    {
+            speedPerSec = 280 + 20*level;
+        }
         gameView = new GameView(this, numBlocks, speedPerSec, level, totScore, endless);
         setContentView(gameView);
     }
