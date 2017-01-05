@@ -313,8 +313,6 @@ public class GameView extends SurfaceView implements Runnable {
             // Draw the background color
             canvas.drawColor(Color.argb(255, 255, 255, 255)); // white
 
-            controls.draw(canvas, paint);
-
             paint.setAntiAlias(true);
             // set color of rectangles
             paint.setColor(Color.BLACK);
@@ -338,7 +336,12 @@ public class GameView extends SurfaceView implements Runnable {
                             ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
                     2 * playerRadius, 2 * playerRadius));
             // adding current player location to list of trail coordinates
-            trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY(), trail.size()));
+            if(endless) {
+                trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY()));
+            }
+            else {
+                trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY(), trail.size()));
+            }
 
             Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
                     playerRect.right+playerRadius, playerRect.bottom+playerRadius);
@@ -377,24 +380,12 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setTextSize(70);
             canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
 
-            // Draw everything to the screen
-            ourHolder.unlockCanvasAndPost(canvas);
-        }
-    }
-
-    public void drawPause() {
-        // Make sure our drawing surface is valid or we crash
-        if (ourHolder.getSurface().isValid()) {
-            // Lock the canvas ready to draw
-            canvas = ourHolder.lockCanvas();
-
             controls.draw(canvas, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
     }
-
 
     private Rect getRect(int x, int y, int width, int height) {
         return new Rect(x, y, x + width, y + height);
@@ -407,7 +398,7 @@ public class GameView extends SurfaceView implements Runnable {
         gamePaused = true;
         playing = false;
         draw();
-        drawPause();
+//        drawPause();
         try {
             gameThread.join();
         } catch (InterruptedException e) {

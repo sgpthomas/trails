@@ -37,7 +37,7 @@ public class GameControls implements Renderable {
     public void draw(Canvas canvas, Paint paint) {
         if (isPaused) {
             // Draw the background color
-            canvas.drawColor(Color.argb(100, 255, 255, 255));
+            canvas.drawColor(Color.argb(150, 255, 255, 255));
             //translucent white
 
             // buttons
