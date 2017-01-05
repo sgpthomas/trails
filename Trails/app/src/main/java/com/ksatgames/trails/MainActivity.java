@@ -29,7 +29,7 @@ public class MainActivity extends Activity {
         endless=getIntent().getBooleanExtra("ENDLESS", false);
         // Initialize gameView and set it as the view
         //number of screenlengths long the maze is
-        int numBlocks=2;
+        int numBlocks=1;
         if(level<5) {
             numBlocks+=level;
         }

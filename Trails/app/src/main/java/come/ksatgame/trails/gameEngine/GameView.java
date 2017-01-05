@@ -343,7 +343,7 @@ public class GameView extends SurfaceView implements Runnable {
                             ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
                     2 * playerRadius, 2 * playerRadius));
             // adding current player location to list of trail coordinates
-            trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY()));
+            trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY(), trail.size()));
 
             Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
                     playerRect.right+playerRadius, playerRect.bottom+playerRadius);

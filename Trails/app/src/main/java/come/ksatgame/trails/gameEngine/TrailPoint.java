@@ -39,6 +39,21 @@ public class TrailPoint implements Renderable {
         radius = (int) (Math.random() * (GameView.playerRadius / 2));
     }
 
+    public TrailPoint(int x, int y, int hue)  {
+        this.x = x;
+        this.y = y;
+
+        // assign this point a color
+        float[] col = { hue%360, 1, 1 };
+        color = Color.HSVToColor(col);
+
+        // assign this point a starting direction
+        radiusDirection = (Math.random() < 0.5)  ? -1 : 1;
+
+        // assign this point a starting radius
+        radius = (int) (Math.random() * (GameView.playerRadius / 2));
+    }
+
     public void shiftDown(int offset)  {
         y = y - offset;
     }
