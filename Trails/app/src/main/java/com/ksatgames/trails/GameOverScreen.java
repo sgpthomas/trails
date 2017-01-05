@@ -29,6 +29,11 @@ public class GameOverScreen extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void home(View view) {
+        Intent intent=new Intent(this, Start.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)

@@ -82,8 +82,8 @@ public class GameView extends SurfaceView implements Runnable {
 
     public static boolean collisionValid; // do we want collisions with trail to be possible at this point?
 
-    //number of rows to be left blank
     boolean gameWon;
+    boolean endless;
 
 //    Rect restart=new Rect((int)(screenWidth*0.5),(int)(screenHeight*0.7), (int)(screenWidth*0.6), (int)(screenHeight*0.8));
 //    Bitmap restartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.restart);
@@ -91,7 +91,7 @@ public class GameView extends SurfaceView implements Runnable {
     int totScore;
     int level;
 
-    public GameView(Context context, int numBlocks, float speedPerSecond, int level, int totScore) {
+    public GameView(Context context, int numBlocks, float speedPerSecond, int level, int totScore, boolean isEndless) {
 
         // initialize our object
         super(context);
@@ -112,7 +112,7 @@ public class GameView extends SurfaceView implements Runnable {
         // set player speed
         this.speedPerSecond = speedPerSecond;
 
-        int cols=4+(int)(level/3);
+        int cols=4+ level/3;
         // get matrix
         blockSize = screenWidth / cols;
 
@@ -133,6 +133,8 @@ public class GameView extends SurfaceView implements Runnable {
 
         // Set our boolean to true - game on!
         gameWon = false;
+        endless = isEndless;
+
         playing = true;
         gamePaused = false;
     }
@@ -224,7 +226,10 @@ public class GameView extends SurfaceView implements Runnable {
         // bouncing off the bottom of the screen
         else if (dir == Direction.STOP_DOWN && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
             // the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
-            gameWon=true;
+            if(!endless) {
+                gameWon=true;
+                endGame();
+            }
             dir = Direction.STOP_UP;
             passed = 0;
             score += 100;
@@ -333,7 +338,7 @@ public class GameView extends SurfaceView implements Runnable {
                             ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
                     2 * playerRadius, 2 * playerRadius));
             // adding current player location to list of trail coordinates
-            trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY()));
+            trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY(), trail.size()));
 
             Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
                     playerRect.right+playerRadius, playerRect.bottom+playerRadius);

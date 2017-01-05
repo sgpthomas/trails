@@ -34,4 +34,11 @@
         android:layout_height="wrap_content"
         android:onClick="instructions"
         android:id="@+id/instructions_button" />
+
+    <Button
+        android:text="Endless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/endless"
+        android:onClick="endless"/>
 </LinearLayout>

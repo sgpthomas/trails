@@ -27,4 +27,10 @@ public class Start extends AppCompatActivity {
             Intent intent = new Intent(this, InstructionsScreen.class);
             startActivity(intent);
         }
+
+        public void endless(View view)  {
+            Intent intent = new Intent(this, LevelSelectionScreen.class);
+            intent.putExtra("ENDLESS", true);
+            startActivity(intent);
+        }
 }

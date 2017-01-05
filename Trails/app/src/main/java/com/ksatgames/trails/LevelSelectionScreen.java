@@ -14,9 +14,11 @@ public class LevelSelectionScreen extends AppCompatActivity {
 
     EditText level;
     int l;
+    boolean endless;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+            endless=getIntent().getBooleanExtra("ENDLESS", false);
             setContentView(R.layout.activity_level_selection);
             level=(EditText)findViewById(R.id.level);
         }
@@ -31,6 +33,9 @@ public class LevelSelectionScreen extends AppCompatActivity {
             }
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("LEVEL", l);
+            if(endless) {
+                intent.putExtra("ENDLESS", true);
+            }
             startActivity(intent);
         }
 
