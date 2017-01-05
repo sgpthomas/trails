@@ -235,6 +235,7 @@ public class GameView extends SurfaceView implements Runnable {
         else if (dir == Direction.STOP_DOWN && playerRect.centerY() >= screenHeight-(2*playerRadius)-(2*speedPerSecond/fps)) {
             // the multiplication by 2 is logically arbitrary- it just makes a good bounce while testing
             gameWon=true;
+            endGame();
             dir = Direction.STOP_UP;
             passed = 0;
             score += 100;
@@ -356,7 +357,7 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStrokeJoin(Paint.Join.ROUND);
             for (int i = 0; i < trail.size() - 1; i++) {
                 TrailPoint start = trail.get(i);
-                start.draw(canvas, paint, collisionValid);
+                start.draw(canvas, paint);
 
                 // check for collision
                 if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
