@@ -20,16 +20,18 @@ public class MainActivity extends Activity {
     GameView gameView;
     int totScore;
     int level;
+    boolean endless;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         totScore = getIntent().getIntExtra("TOT_SCORE", 0);
         level = getIntent().getIntExtra("LEVEL", 1);
+        endless=getIntent().getBooleanExtra("ENDLESS", false);
         // Initialize gameView and set it as the view
         //number of screenlengths long the maze is
         int numBlocks=2+level/2;
         int speedPerSec=220+20*level;
-        gameView = new GameView(this, numBlocks, speedPerSec, level, totScore);
+        gameView = new GameView(this, numBlocks, speedPerSec, level, totScore, endless);
         setContentView(gameView);
     }
     // This method executes when the player starts the game
