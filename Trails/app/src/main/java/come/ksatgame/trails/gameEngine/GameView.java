@@ -358,17 +358,14 @@ public class GameView extends SurfaceView implements Runnable {
                 Pair start = trail.get(i);
                 if (start.inScreen()) {
                     Random rand = new Random();
-                    //so that we never get white
                     if (collisionValid) {
-                        int r = rand.nextInt(240);
-                        int g = rand.nextInt(250);
-                        int b = rand.nextInt(250);
-                        int randomColor = Color.rgb(r, g, b);
+                        float[] col = { rand.nextInt(255), 255, 255 };
+                        int randomColor = Color.HSVToColor(col);
                         paint.setColor(randomColor);
                     }
                     int rad=(int) (Math.random() * playerRadius);
                     canvas.drawCircle(start.x, start.y, rad, paint);
-                    //check for collision
+                    // check for collision
                     if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
                         if(Rect.intersects(playerRect, new Rect(start.x-(int)(rad*0.5), start.y-(int)(rad*0.5),
                                 start.x+(int)(rad), start.y+(int)(rad)))) {
