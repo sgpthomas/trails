@@ -55,7 +55,7 @@ public class GameView extends SurfaceView implements Runnable {
     float playerNewX;
     float playerDeltaX = 0;
     final int playerSpeed = 5;
-    public final static int playerRadius = 25;
+    public static int playerRadius = 25;
     final int playerHeight = 250;
 
     float speedPerSecond = 100;
@@ -100,6 +100,8 @@ public class GameView extends SurfaceView implements Runnable {
         // initialize window dimensions
         screenHeight = getScreenHeight();
         screenWidth = getScreenWidth();
+
+        playerRadius=screenWidth/30;
 
         playerRect = getRect(screenWidth / 2 + playerRadius, screenHeight - playerHeight - playerRadius,
                 2 * playerRadius, 2 * playerRadius);
