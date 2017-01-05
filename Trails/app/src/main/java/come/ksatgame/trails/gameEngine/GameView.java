@@ -55,7 +55,7 @@ public class GameView extends SurfaceView implements Runnable {
     float playerNewX;
     float playerDeltaX = 0;
     final int playerSpeed = 5;
-    final int playerRadius = 25;
+    public final static int playerRadius = 25;
     final int playerHeight = 250;
 
     float speedPerSecond = 100;
@@ -77,7 +77,7 @@ public class GameView extends SurfaceView implements Runnable {
     enum Direction { UP, DOWN, STOP_UP, STOP_DOWN
     }
     Direction dir = Direction.UP;
-    ArrayList<Pair> trail = new ArrayList<>(0);
+    ArrayList<TrailPoint> trail = new ArrayList<>(0);
     // stores coordinates between which trail is to be drawn
     boolean collisionValid;
     //do we want collisions with trail to be possible at this point?
@@ -298,7 +298,7 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         // move the trail
-        for (Pair p : trail) {
+        for (TrailPoint p : trail) {
             if (dir == Direction.UP)
                 p.shiftUp((int) (speedPerSecond / fps));
             else if (dir == Direction.DOWN)
@@ -339,7 +339,7 @@ public class GameView extends SurfaceView implements Runnable {
                             ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
                     2 * playerRadius, 2 * playerRadius));
             // adding current player location to list of trail coordinates
-            trail.add(new Pair(playerRect.centerX(), playerRect.centerY()));
+            trail.add(new TrailPoint(playerRect.centerX(), playerRect.centerY()));
 
             Rect bigRect=new Rect(playerRect.left-playerRadius, playerRect.top-playerRadius,
                     playerRect.right+playerRadius, playerRect.bottom+playerRadius);
@@ -355,25 +355,18 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
             for (int i = 0; i < trail.size() - 1; i++) {
-                Pair start = trail.get(i);
-                if (start.inScreen()) {
-                    Random rand = new Random();
-                    if (collisionValid) {
-                        float[] col = { rand.nextInt(255), 255, 255 };
-                        int randomColor = Color.HSVToColor(col);
-                        paint.setColor(randomColor);
-                    }
-                    int rad=(int) (Math.random() * playerRadius);
-                    canvas.drawCircle(start.x, start.y, rad, paint);
-                    // check for collision
-                    if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
-                        if(Rect.intersects(playerRect, new Rect(start.x-(int)(rad*0.5), start.y-(int)(rad*0.5),
-                                start.x+(int)(rad), start.y+(int)(rad)))) {
-                            endGame();
-                        }
+                TrailPoint start = trail.get(i);
+                start.draw(canvas, paint, collisionValid);
+
+                // check for collision
+                if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
+                    if(Rect.intersects(playerRect, new Rect(start.x-(int)(start.radius*0.5), start.y-(int)(start.radius*0.5),
+                            start.x+(start.radius), start.y+(start.radius)))) {
+                        endGame();
                     }
                 }
             }
+
             // drawing player
             paint.setColor(Color.BLUE);
             paint.setStrokeWidth(10);
