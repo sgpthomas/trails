@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed() {
         gameView.pause();
-        gameView.drawPause();
+//        gameView.drawPause();
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("End game")

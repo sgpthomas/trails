@@ -74,18 +74,13 @@ public class GameView extends SurfaceView implements Runnable {
     int blockSize;
     // int dir = 1;   // 1 is upwards, 2 is down,
     // 3 is matrix stopped and ball moves upwards, 4 is matrix is stopped, ball moves downwards
-    enum Direction { UP, DOWN, STOP_UP, STOP_DOWN
-    }
+    enum Direction { UP, DOWN, STOP_UP, STOP_DOWN }
     Direction dir = Direction.UP;
     ArrayList<TrailPoint> trail = new ArrayList<>(0); // stores coordinates between which trail is to be drawn
 
+    GameControls controls;
+
     public static boolean collisionValid; // do we want collisions with trail to be possible at this point?
-
-    Rect pause;
-    Bitmap pauseBitmap;
-
-    Rect play;
-    Bitmap playBitmap;
 
     //number of rows to be left blank
     boolean gameWon;
@@ -130,15 +125,11 @@ public class GameView extends SurfaceView implements Runnable {
             }
         }
 
+        controls = new GameControls(this.getResources());
+
         this.level=level;
         this.totScore=totScore;
-
-        pause = new Rect(0, 0, (int)(screenWidth*0.2), (int)(screenWidth*0.2));
-        pauseBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause);
-
-        play = new Rect((int)(screenWidth*0.4), (int)(screenHeight*0.7), (int)(screenWidth*0.6),
-                (int)(screenHeight*0.7 + screenWidth*0.2));
-        playBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play);
+        this.totScore=totScore;
 
         // Set our boolean to true - game on!
         gameWon = false;
@@ -317,6 +308,8 @@ public class GameView extends SurfaceView implements Runnable {
             // Draw the background color
             canvas.drawColor(Color.argb(255, 255, 255, 255)); // white
 
+            controls.draw(canvas, paint);
+
             paint.setAntiAlias(true);
             // set color of rectangles
             paint.setColor(Color.BLACK);
@@ -379,10 +372,6 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setTextSize(70);
             canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
 
-            // pause button
-            if (!gamePaused)
-                canvas.drawBitmap(pauseBitmap, null, pause, paint);
-
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -394,13 +383,7 @@ public class GameView extends SurfaceView implements Runnable {
             // Lock the canvas ready to draw
             canvas = ourHolder.lockCanvas();
 
-            // Draw the background color
-            canvas.drawColor(Color.argb(100, 255, 255, 255));
-            //translucent white
-
-            // buttons
-            canvas.drawBitmap(playBitmap, null, play, paint);
-//            canvas.drawBitmap(restartBitmap, null, restart, paint);
+            controls.draw(canvas, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
@@ -418,6 +401,8 @@ public class GameView extends SurfaceView implements Runnable {
     public void pause() {
         gamePaused = true;
         playing = false;
+        draw();
+        drawPause();
         try {
             gameThread.join();
         } catch (InterruptedException e) {
@@ -463,21 +448,34 @@ public class GameView extends SurfaceView implements Runnable {
             case MotionEvent.ACTION_MOVE:
                 playerNewX = motionEvent.getX();
                 float y = motionEvent.getY();
-                if(!gamePaused) {
-                    if (pause.contains((int) playerNewX, (int) y)) {
-                        gamePaused = true;
+
+                if (controls.isPressed((int) playerNewX, (int) y)) {
+                    if (controls.isPaused)
                         pause();
-                        drawPause();
-                    } else {
-                        playerDeltaX = playerNewX - playerX;
-                    }
-                    break;
-                } else {
-                    if (play.contains((int) playerNewX, (int) y))   {
+                    else
                         resume();
-                    }
                 }
+
+                if (!gamePaused)
+                    playerDeltaX = playerNewX - playerX;
+
+                return true;
+
+//                if(!gamePaused) {
+//                    if (pause.contains((int) playerNewX, (int) y)) {
+//                        gamePaused = true;
+//                        pause();
+//                        drawPause();
+//                    } else {
+//                        playerDeltaX = playerNewX - playerX;
+//                    }
+//                    break;
+//                } else {
+//                    if (play.contains((int) playerNewX, (int) y))   {
+//                        resume();
+//                    }
+//                }
         }
-        return true;
+        return false;
     }
 }
