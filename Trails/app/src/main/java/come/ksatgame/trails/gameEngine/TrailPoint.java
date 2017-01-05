@@ -29,7 +29,7 @@ public class TrailPoint implements Renderable {
 
         // assign this point a color
         Random rand = new Random();
-        float[] col = { rand.nextInt(255), 255, 255 };
+        float[] col = { rand.nextInt(360), 1, 1 };
         color = Color.HSVToColor(col);
 
         // assign this point a starting direction
