@@ -39,18 +39,6 @@ public class TrailPoint implements Renderable {
         radius = (int) (Math.random() * (GameView.playerRadius / 2));
     }
 
-    public void shiftDown(int offset)  {
-        y = y - offset;
-    }
-
-    /**
-     * shifts the point down by offset while screen scrolling up
-     * @param offset
-     */
-    public void shiftUp(int offset)  {
-        y = y + offset;
-    }
-
     @Override
     public void draw(Canvas canvas, Paint paint) {
         if (inScreen()) {
@@ -65,6 +53,18 @@ public class TrailPoint implements Renderable {
             canvas.drawCircle(this.x, this.y, radius, paint);
             counter++;
         }
+    }
+
+    public void shiftDown(int offset)  {
+        y = y - offset;
+    }
+
+    /**
+     * shifts the point down by offset while screen scrolling up
+     * @param offset
+     */
+    public void shiftUp(int offset)  {
+        y = y + offset;
     }
 
     /**

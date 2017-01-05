@@ -77,10 +77,9 @@ public class GameView extends SurfaceView implements Runnable {
     enum Direction { UP, DOWN, STOP_UP, STOP_DOWN
     }
     Direction dir = Direction.UP;
-    ArrayList<TrailPoint> trail = new ArrayList<>(0);
-    // stores coordinates between which trail is to be drawn
-    public static boolean collisionValid;
-    //do we want collisions with trail to be possible at this point?
+    ArrayList<TrailPoint> trail = new ArrayList<>(0); // stores coordinates between which trail is to be drawn
+
+    public static boolean collisionValid; // do we want collisions with trail to be possible at this point?
 
     Rect pause;
     Bitmap pauseBitmap;
@@ -134,17 +133,17 @@ public class GameView extends SurfaceView implements Runnable {
         this.level=level;
         this.totScore=totScore;
 
-        pause=new Rect(0,0, (int)(screenWidth*0.2), (int)(screenWidth*0.2));
+        pause = new Rect(0, 0, (int)(screenWidth*0.2), (int)(screenWidth*0.2));
         pauseBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pause);
 
-        play=new Rect((int)(screenWidth*0.4),(int)(screenHeight*0.7), (int)(screenWidth*0.6),
+        play = new Rect((int)(screenWidth*0.4), (int)(screenHeight*0.7), (int)(screenWidth*0.6),
                 (int)(screenHeight*0.7 + screenWidth*0.2));
         playBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.play);
 
         // Set our boolean to true - game on!
-        gameWon=false;
+        gameWon = false;
         playing = true;
-        gamePaused=false;
+        gamePaused = false;
     }
 
     public static int getScreenHeight() {
@@ -172,16 +171,16 @@ public class GameView extends SurfaceView implements Runnable {
             update();
 
             //check condition to prevent canvas null pointer
-            if(playing) {
-            // Draw the frame
-            draw();
+            if (playing) {
+                // Draw the frame
+                draw();
 
-            // Calculate the fps this frame
-            // We can then use the result to time animations and more.
-            long timeThisFrame = System.currentTimeMillis() - startFrameTime;
-            if (timeThisFrame > 0) {
-                fps = 1000 / timeThisFrame;
-            }
+                // Calculate the fps this frame
+                // We can then use the result to time animations and more.
+                long timeThisFrame = System.currentTimeMillis() - startFrameTime;
+                if (timeThisFrame > 0) {
+                    fps = 1000 / timeThisFrame;
+                }
             }
         }
     }
@@ -265,9 +264,11 @@ public class GameView extends SurfaceView implements Runnable {
                 }
             }
         }
+
         collisionValid = !((dir == Direction.STOP_DOWN && matrixPosition >= screenHeight-
                 (playerHeight+playerRadius)*2)
                 ||(playerRect.centerY()>(screenHeight-playerHeight)&& dir==Direction.STOP_UP));
+
         // collision handling
         if (playerRect.centerY() > (playerRadius+3)) {
             // +3 so that the player doesn't collide with an unseen rectangle at the top of the screen
@@ -351,12 +352,12 @@ public class GameView extends SurfaceView implements Runnable {
                     }
             }
             // now to draw trail
-            if (!collisionValid) paint.setColor(Color.BLUE);
+            paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
             paint.setStrokeJoin(Paint.Join.ROUND);
             for (int i = 0; i < trail.size() - 1; i++) {
                 TrailPoint start = trail.get(i);
-                start.draw(canvas, paint, collisionValid);
+                start.draw(canvas, paint);
 
                 // check for collision
                 if(i<lastIndex && bigRect.contains(start.x, start.y) && collisionValid){
@@ -378,8 +379,9 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setTextSize(70);
             canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
 
-            //pause button
-            canvas.drawBitmap(pauseBitmap, null, pause, paint);
+            // pause button
+            if (!gamePaused)
+                canvas.drawBitmap(pauseBitmap, null, pause, paint);
 
             // Draw everything to the screen
             ourHolder.unlockCanvasAndPost(canvas);
@@ -396,7 +398,7 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawColor(Color.argb(100, 255, 255, 255));
             //translucent white
 
-            //buttons
+            // buttons
             canvas.drawBitmap(playBitmap, null, play, paint);
 //            canvas.drawBitmap(restartBitmap, null, restart, paint);
 
@@ -406,15 +408,15 @@ public class GameView extends SurfaceView implements Runnable {
     }
 
 
-        private Rect getRect(int x, int y, int width, int height) {
+    private Rect getRect(int x, int y, int width, int height) {
         return new Rect(x, y, x + width, y + height);
-        }
+    }
 
 
     // If SimpleGameEngine Activity is paused/stopped
     // shutdown our thread.
     public void pause() {
-        gamePaused=true;
+        gamePaused = true;
         playing = false;
         try {
             gameThread.join();
@@ -427,28 +429,28 @@ public class GameView extends SurfaceView implements Runnable {
     // start our thread.
     public void resume() {
         playing = true;
-        gamePaused=false;
+        gamePaused = false;
         gameThread = new Thread(this);
         gameThread.start();
     }
 
     // ends game and goes to the GameOver Screen
     public void endGame() {
-        playing=false;
-        //blankRows from the empty rows+3 from the "padding"+onScreen rows= not-counted rows
-        //You clear the level if you've completed a loop, that is to say, bounced off the bottom of the screen
-        if(gameWon) {
-        Intent intent = new Intent(this.context, LevelClearedScreen.class);
-            intent.putExtra("SCORE", score);
-            intent.putExtra("LEVEL", level);
-            intent.putExtra("TOT_SCORE", totScore);
-        this.context.startActivity(intent);
-    }
-    else {
-        Intent intent = new Intent(this.context, GameOverScreen.class);
-            intent.putExtra("TOT_SCORE", totScore+score);
-        this.context.startActivity(intent);
-    }
+        playing = false;
+        // blankRows from the empty rows+3 from the "padding"+onScreen rows= not-counted rows
+        // You clear the level if you've completed a loop, that is to say, bounced off the bottom of the screen
+        if (gameWon) {
+            Intent intent = new Intent(this.context, LevelClearedScreen.class);
+                intent.putExtra("SCORE", score);
+                intent.putExtra("LEVEL", level);
+                intent.putExtra("TOT_SCORE", totScore);
+            this.context.startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(this.context, GameOverScreen.class);
+                intent.putExtra("TOT_SCORE", totScore+score);
+            this.context.startActivity(intent);
+        }
     }
 
     // The SurfaceView class implements onTouchListener
@@ -460,19 +462,17 @@ public class GameView extends SurfaceView implements Runnable {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 playerNewX = motionEvent.getX();
-                float y=motionEvent.getY();
+                float y = motionEvent.getY();
                 if(!gamePaused) {
                     if (pause.contains((int) playerNewX, (int) y)) {
-                        pause();
                         gamePaused = true;
+                        pause();
                         drawPause();
-                    }
-                    else {
+                    } else {
                         playerDeltaX = playerNewX - playerX;
                     }
                     break;
-                }
-                else{
+                } else {
                     if (play.contains((int) playerNewX, (int) y))   {
                         resume();
                     }
