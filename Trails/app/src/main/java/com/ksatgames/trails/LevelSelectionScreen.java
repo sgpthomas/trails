@@ -31,8 +31,12 @@ public class LevelSelectionScreen extends AppCompatActivity {
             catch (Exception e) {
                 l=1;
             }
+            if (l<1){
+                l=1;
+            }
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("LEVEL", l);
+            intent.putExtra("LEVEL_SELECTED", l);
             if(endless) {
                 intent.putExtra("ENDLESS", true);
             }

@@ -27,7 +27,7 @@
         android:layout_marginLeft="1mm"
         android:layout_marginRight="1mm"
         android:id="@+id/instructions"
-        android:text="The aim of this game is to go travel as long as you can without colliding with your own trail- or the black barriers. Control the blue dot by tapping or swiping left and right. Once you reach a certain distance, you'll bounce off the tp of the creen and start backwards. You have a small grace period when you bounce off the ends of the maze. At this time, your trail turns blue and it's ok if you go over it. You clear a level if you successfully complete at least one round (back and forth) before you crash." />
+        android:text="The aim of this game is to go travel as long as you can without colliding with your own trail- or the black barriers. Control the blue dot by tapping or swiping left and right. Once you reach a certain distance, you'll bounce off the top of the creen and start backwards. You have a small grace period when you bounce off the ends of the maze. At this time, your trail turns blue and it's ok if you go over it. You clear a level if you successfully complete one round (back and forth)." />
 
     <Button
         android:text="Back to start screen"

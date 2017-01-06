@@ -55,7 +55,7 @@ public class GameView extends SurfaceView implements Runnable {
     float playerNewX;
     float playerDeltaX = 0;
     final int playerSpeed = 5;
-    public static int playerRadius = 25;
+    public final static int playerRadius = 25;
     final int playerHeight = 250;
 
     float speedPerSecond = 100;
@@ -90,8 +90,10 @@ public class GameView extends SurfaceView implements Runnable {
 
     int totScore;
     int level;
+    int levelSelection;
+    //0 if quick play, start level if game started through level selection
 
-    public GameView(Context context, int numBlocks, float speedPerSecond, int level, int totScore, boolean isEndless) {
+    public GameView(Context context, int numBlocks, float speedPerSecond, int level, int totScore, boolean isEndless, int levelSelection) {
 
         // initialize our object
         super(context);
@@ -100,8 +102,6 @@ public class GameView extends SurfaceView implements Runnable {
         // initialize window dimensions
         screenHeight = getScreenHeight();
         screenWidth = getScreenWidth();
-
-        playerRadius=screenWidth/30;
 
         playerRect = getRect(screenWidth / 2 + playerRadius, screenHeight - playerHeight - playerRadius,
                 2 * playerRadius, 2 * playerRadius);
@@ -131,7 +131,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         this.level=level;
         this.totScore=totScore;
-        this.totScore=totScore;
+        this.levelSelection=levelSelection;
 
         // Set our boolean to true - game on!
         gameWon = false;
@@ -317,11 +317,12 @@ public class GameView extends SurfaceView implements Runnable {
         }
 
         // move the trail
-        for (TrailPoint p : trail) {
+        for(int i=0; i<trail.size(); i++)   {
+//        for (TrailPoint p : trail) { not used to avoid ConcurrentModificationException
             if (dir == Direction.UP)
-                p.shiftUp((int) (speedPerSecond / fps));
+                trail.get(i).shiftUp((int) (speedPerSecond / fps));
             else if (dir == Direction.DOWN)
-                p.shiftDown((int) (speedPerSecond / fps));
+                trail.get(i).shiftDown((int) (speedPerSecond / fps));
         }
     }
 
@@ -431,11 +432,15 @@ public class GameView extends SurfaceView implements Runnable {
                 intent.putExtra("SCORE", score);
                 intent.putExtra("LEVEL", level);
                 intent.putExtra("TOT_SCORE", totScore);
+                intent.putExtra("LEVEL_SELECTED", levelSelection);
+                intent.putExtra("ENDLESS", endless);
             this.context.startActivity(intent);
         }
         else {
             Intent intent = new Intent(this.context, GameOverScreen.class);
                 intent.putExtra("TOT_SCORE", totScore+score);
+                intent.putExtra("LEVEL_SELECTED", levelSelection);
+                intent.putExtra("ENDLESS", endless);
             this.context.startActivity(intent);
         }
     }

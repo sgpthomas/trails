@@ -17,12 +17,14 @@ public class LevelClearedScreen extends AppCompatActivity {
     int score;
     int totScore;
     int level;
+    int levelSelected;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             score = getIntent().getIntExtra("SCORE", 0);
             totScore = getIntent().getIntExtra("TOT_SCORE", 0);
             level = getIntent().getIntExtra("LEVEL", 0);
+            levelSelected=getIntent().getIntExtra("LEVEL_SELECTED", 0);
             setContentView(R.layout.activity_level_cleared);
             TextView scoreText = (TextView)findViewById(R.id.score_text);
             scoreText.setText("Score : "+score);
@@ -40,6 +42,9 @@ public class LevelClearedScreen extends AppCompatActivity {
         public void levelCleared(View view) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("LEVEL", level);
+            if(levelSelected>0) {
+                intent.putExtra("LEVEL_SELECTED", levelSelected);
+            }
             intent.putExtra("TOT_SCORE", totScore);
             startActivity(intent);
         }

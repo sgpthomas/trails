@@ -10,22 +10,37 @@ import android.widget.TextView;
 
 public class GameOverScreen extends AppCompatActivity {
 
+    int levelSelection;
+    boolean endless;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over_screen);
         int score = getIntent().getIntExtra("TOT_SCORE", 0);
+        levelSelection=getIntent().getIntExtra("LEVEL_SELECTED", 0);
+        endless=getIntent().getBooleanExtra("ENDLESS", false);
         TextView scoreText = (TextView)findViewById(R.id.score_text);
         scoreText.setText("Total Score : "+score);
     }
 
     public void playAgain(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent;
+        if (levelSelection > 0) {
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra("LEVEL", levelSelection);
+            intent.putExtra("LEVEL_SELECTED", levelSelection);
+            intent.putExtra("ENDLESS", endless);
+        }
+        else  {
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra("ENDLESS", endless);
+        }
         startActivity(intent);
     }
 
     public void levelSelection(View view) {
         Intent intent = new Intent(this, LevelSelectionScreen.class);
+        intent.putExtra("ENDLESS", endless);
         startActivity(intent);
     }
 
