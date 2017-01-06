@@ -120,7 +120,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         matrix = Generator.getInstance().genMatrix((screenHeight/blockSize)*numBlocks, cols, (cols/2)-1, screenHeight/(blockSize));
 
-        submatrix=new int[screenHeight/blockSize+3][cols];
+        submatrix=new int[screenHeight/blockSize+4][cols];
         for(int i=0; i<submatrix.length; i++) {
             for(int j=0; j<cols; j++) {
                 submatrix[i][j] = matrix[matrix.length-(screenHeight/blockSize)-4+i][j];
