@@ -48,12 +48,10 @@ public class TrailPoint implements Renderable {
         color = Color.HSVToColor(col);
 
         // assign this point a starting direction
-//        radiusDirection = (Math.random() < 0.5)  ? -1 : 1;
-//        radiusDirection = (hue%2==0)  ? -1 : 1;
-        radiusDirection = 1;
+            radiusDirection = 1;
+        
         // assign this point a starting radius
-//        radius = (int) (Math.random() * (GameView.playerRadius / 2));
-        radius=GameView.playerRadius/2;
+            radius=GameView.playerRadius/2;
     }
 
     @Override

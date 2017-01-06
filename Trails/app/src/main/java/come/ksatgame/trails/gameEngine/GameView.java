@@ -86,7 +86,7 @@ public class GameView extends SurfaceView implements Runnable {
     boolean endless;
 
 //    Rect restart=new Rect((int)(screenWidth*0.5),(int)(screenHeight*0.7), (int)(screenWidth*0.6), (int)(screenHeight*0.8));
-//    Bitmap restartBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.restart);
+      Bitmap blockBitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.block);
 
     int totScore;
     int level;
@@ -346,14 +346,16 @@ public class GameView extends SurfaceView implements Runnable {
             for (int y = 0; y < submatrix.length; y++) {
                 for (int x = 0; x < submatrix[y].length; x++) {
                     if (submatrix[y][x] == 1) {
-                        canvas.drawRect(getRect(x * blockSize, (y - 2) * blockSize +
+                        Rect R=getRect(x * blockSize, (y - 2) * blockSize +
                                 ((dir == Direction.UP || dir == Direction.DOWN) ? matrixPosition : 0),
-                                blockSize, blockSize), paint);
+                                blockSize, blockSize);
+                        canvas.drawBitmap(blockBitmap, null, R, paint);
                     }
                 }
             }
 
             // player draw logic
+            //consider using offset instead
             playerRect.set(getRect((int) playerX - playerRadius,
                     (dir == Direction.DOWN ? playerHeight + playerRadius : screenHeight - playerHeight - playerRadius -
                             ((dir == Direction.STOP_UP || dir == Direction.STOP_DOWN) ? matrixPosition : 0)),
