@@ -6,6 +6,8 @@ inkscape -z -e trails72.png -w 72 -h 72 trails.svg > /dev/null
 inkscape -z -e trails96.png -w 96 -h 96 trails.svg > /dev/null
 inkscape -z -e trails144.png -w 144 -h 144 trails.svg > /dev/null
 inkscape -z -e trails192.png -w 192 -h 192 trails.svg > /dev/null
+inkscape -z -e trails512.png -w 512 -h 512 trails.svg > /dev/null
+inkscape -z -e feature.jpg -w 1024 -h 500 feature_graphic.svg > /dev/null
 
 echo "Moving files into correct location."
 mv trails48.png ../Trails/app/src/main/res/mipmap-mdpi/ic_launcher.png
