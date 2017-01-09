@@ -18,8 +18,8 @@ public class InstructionsScreen extends AppCompatActivity {
     }
 
     public void start(View view) {
-//        Intent intent = new Intent(this, Start.class);
-//        startActivity(intent);
-        finish();
+        Intent intent = new Intent(this, Start.class);
+        startActivity(intent);
+//        finish();
     }
 }

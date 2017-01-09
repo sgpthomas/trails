@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
+import android.app.Activity;
 /**
  * Created by samthomas on 10/2/16.
  */
@@ -165,8 +165,6 @@ public class GameView extends SurfaceView implements Runnable {
             // Update the frame
             update();
 
-            //check condition to prevent canvas null pointer
-            if (playing) {
                 // Draw the frame
                 draw();
 
@@ -175,7 +173,7 @@ public class GameView extends SurfaceView implements Runnable {
                 long timeThisFrame = System.currentTimeMillis() - startFrameTime;
                 if (timeThisFrame > 0) {
                     fps = 1000 / timeThisFrame;
-                }
+
             }
         }
     }
@@ -384,10 +382,10 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
 
-            paint.setColor(Color.argb(255, 0, 255, 100));   //something that stands out against white and black
+            paint.setColor(Color.argb(150, 0, 0, 0));   //something that stands out against white and black
             // print score
-            paint.setTextSize(70);
-            canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
+            paint.setTextSize(50);
+            canvas.drawText("Score:"+score, screenWidth-250-(score%100), 70, paint);
 
             controls.draw(canvas, paint);
 
@@ -407,7 +405,6 @@ public class GameView extends SurfaceView implements Runnable {
         gamePaused = true;
         playing = false;
         draw();
-//        drawPause();
         try {
             gameThread.join();
         } catch (InterruptedException e) {
@@ -445,6 +442,9 @@ public class GameView extends SurfaceView implements Runnable {
                 intent.putExtra("ENDLESS", endless);
             this.context.startActivity(intent);
         }
+        //prevents canvas null pointer exceptions (?)
+        Activity activity = (Activity)getContext();
+        activity.finish();
     }
 
     // The SurfaceView class implements onTouchListener
