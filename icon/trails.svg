@@ -235,39 +235,36 @@
          id="circle5875"
          style="opacity:1;fill:#5b5b5b;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1" />
     </g>
-    <g
-       id="g5858">
-      <circle
-         style="opacity:1;fill:#99cc33;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1"
-         id="path5711"
-         cx="361.49524"
-         cy="370.00394"
-         r="38.499493" />
-      <circle
-         r="31.499584"
-         cy="418.00394"
-         cx="371.49524"
-         id="circle5713"
-         style="opacity:1;fill:#ffcc00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1" />
-      <circle
-         style="opacity:1;fill:#ff9900;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1"
-         id="circle5715"
-         cx="389.49524"
-         cy="456.00394"
-         r="49.499348" />
-      <circle
-         r="34.499546"
-         cy="498.00394"
-         cx="387.49524"
-         id="circle5717"
-         style="opacity:1;fill:#ff6600;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1" />
-      <circle
-         style="opacity:1;fill:#cc0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1"
-         id="circle5719"
-         cx="371.49524"
-         cy="542.00391"
-         r="20.499729" />
-    </g>
+    <circle
+       r="20.499729"
+       cy="542.00391"
+       cx="371.49524"
+       id="circle5719"
+       style="opacity:1;fill:#cc0000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1" />
+    <circle
+       style="opacity:1;fill:#ff6600;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1"
+       id="circle5717"
+       cx="387.49524"
+       cy="498.00394"
+       r="34.499546" />
+    <circle
+       r="49.499348"
+       cy="456.00394"
+       cx="389.49524"
+       id="circle5715"
+       style="opacity:1;fill:#ff9900;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1" />
+    <circle
+       style="opacity:1;fill:#ffcc00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1"
+       id="circle5713"
+       cx="371.49524"
+       cy="418.00394"
+       r="31.499584" />
+    <circle
+       r="38.499493"
+       cy="370.00394"
+       cx="361.49524"
+       id="path5711"
+       style="opacity:1;fill:#99cc33;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-opacity:1" />
     <path
        transform="matrix(0.99377472,0,0,1.0441797,2.2559074,-73.761662)"
        inkscape:connector-curvature="0"
