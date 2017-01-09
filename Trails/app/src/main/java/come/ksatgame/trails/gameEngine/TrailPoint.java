@@ -51,7 +51,7 @@ public class TrailPoint implements Renderable {
             radiusDirection = 1;
         
         // assign this point a starting radius
-            radius=GameView.playerRadius/2;
+        radius = (int) (Math.random() * (GameView.playerRadius / 2));
     }
 
     @Override
