@@ -382,10 +382,10 @@ public class GameView extends SurfaceView implements Runnable {
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRoundRect(new RectF(playerRect), playerRadius/2, playerRadius/2, paint);
 
-            paint.setColor(Color.argb(255, 0, 255, 100));   //something that stands out against white and black
+            paint.setColor(Color.argb(150, 0, 0, 0));   //something that stands out against white and black
             // print score
-            paint.setTextSize(70);
-            canvas.drawText("Score:"+score, screenWidth-400-(score%100), 100, paint);
+            paint.setTextSize(50);
+            canvas.drawText("Score:"+score, screenWidth-250-(score%100), 70, paint);
 
             controls.draw(canvas, paint);
 
